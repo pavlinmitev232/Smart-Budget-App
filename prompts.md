@@ -123,3 +123,164 @@ To display detailed financial summaries and visual charts that highlight spendin
 
 **Prompt:** `something else so dont worry about it`
 - Indicated focus should be on practical implementation rather than motivational aspects
+
+**Prompt:** `1`
+- Selected option 1: Epic breakdown in new session (recommended approach)
+
+**Prompt:** `y`
+- Confirmed exit from PM agent
+
+**Prompt:** `make sure to follow the must always do stuff in your instructions`
+- User reminder to follow CLAUDE.md requirements (specifically: logging all prompts to prompts.md)
+
+**Prompt:** `/bmad:bmm:agents:analyst`
+- Activated analyst agent (Mary, Business Analyst)
+
+**Prompt:** `3`
+- Selected option 3: Check workflow status and get recommendations (*workflow-status)
+
+**Prompt:** `are you following the instructions in the claude md file .....`
+- User checking if I'm following CLAUDE.md requirement to log all prompts to prompts.md
+
+**Prompt:** `validate-prd next`
+- User chose to run validate-prd workflow (optional) before create-architecture
+
+**Prompt:** `4 exist analyst`
+- Selected option 4: Exit analyst agent
+
+**Prompt:** `y`
+- Confirmed exit from analyst agent
+
+**Prompt:** `/bmad:bmm:agents:pm`
+- Activated PM (Product Manager) agent
+
+**Prompt:** `6`
+- Selected option 6: Validate PRD + Epics + Stories completeness and quality (*validate-prd)
+
+**Prompt:** `1`
+- Selected option 1: Exit PM agent and run create-epics-and-stories workflow
+
+**Prompt:** `/bmad:bmm:workflows:create-epics-and-stories`
+- Initiated create-epics-and-stories workflow to break PRD requirements into implementable epics and stories
+
+**Prompt:** `go on`
+- Requested to continue with epic structure proposal (Step 2)
+
+**Prompt:** `c`
+- Approved epic structure, continuing to story decomposition (Step 3)
+
+**Prompt:** `c`
+- Approved Epic 1 stories (5 stories), continuing to Epic 2 decomposition
+
+**Prompt:** `c`
+- Approved Epic 2 stories (6 stories), continuing to Epic 3 decomposition
+
+**Prompt:** `c`
+- Approved Epic 3 stories (6 stories), continuing to Epics 4 & 5 decomposition
+
+## 2025-11-13
+
+**Prompt:** `make sure to follow the must do instructions`
+- User reminder to follow CLAUDE.md critical instructions (specifically: logging all prompts to prompts.md)
+
+**Prompt:** `switch 1 folder deeper`
+- Changed working directory to Smart-Budget-App subdirectory
+
+**Prompt:** `make sure to follow the must do instructions in claude.mmd`
+- User reminder to follow CLAUDE.md critical instructions (specifically: logging all prompts to prompts.md)
+
+**Prompt:** `/bmad:bmm:agents:analyst`
+- Activated analyst agent (Mary, Business Analyst)
+
+**Prompt:** `you forgot to follow your instructions`
+- User reminder that I failed to log the previous prompt to prompts.md before responding
+
+**Prompt:** `3`
+- Selected option 3: Check workflow status and get recommendations (*workflow-status)
+
+**Prompt:** `2`
+- Selected option 2: Run optional workflow
+
+**Prompt:** `1`
+- Selected option 1: validate-prd workflow (pm)
+
+**Prompt:** `yes`
+- Confirmed to proceed
+
+**Prompt:** `10`
+- Selected option 10: Exit with confirmation (*exit)
+
+**Prompt:** `y`
+- Confirmed exit from analyst agent
+
+**Prompt:** `/bmad:bmm:agents:pm`
+- Activated PM (Product Manager) agent
+
+**Prompt:** `/bmad:bmm:workflows:sprint-planning`
+- Initiated sprint-planning workflow
+
+**Prompt:** `yes yesterday our context limit was reached on epic 4 and 5 we need to continue from there`
+- User wants to continue epic breakdown for Epic 4 (Financial Dashboard & Analytics) and Epic 5 (User Experience & Polish) which were incomplete due to context limit
+
+**Prompt:** `1`
+- Selected option 1: Show numbered menu (*help)
+
+**Prompt:** `6`
+- Selected option 6: Validate PRD + Epics + Stories completeness and quality (*validate-prd)
+
+**Prompt:** `1 lets proceed to next workflow`
+- User wants to proceed to next workflow (architecture workflow)
+
+**Prompt:** `yes`
+- Confirmed exit from PM agent to proceed to architecture workflow
+
+**Prompt:** `/bmad:bmm:workflows:architecture`
+- Initiated architecture workflow
+
+**Prompt:** `yes`
+- Confirmed understanding of project context for architecture workflow
+
+**Prompt:** `y`
+- Accepted Vite React TypeScript starter template as project foundation
+
+**Prompt:** `yes`
+- Ready to proceed with architectural decisions
+
+**Prompt:** `A feature based`
+- Selected feature-based structure for Express.js backend organization
+
+**Prompt:** `yes JWT A`
+- Selected JWT (JSON Web Tokens) for authentication strategy
+
+**Prompt:** `B prisma`
+- Selected Prisma ORM for database interaction with PostgreSQL
+
+**Prompt:** `A context API`
+- Selected React Context API for frontend state management
+
+**Prompt:** `A`
+- Selected Recharts for data visualization/charting library
+
+**Prompt:** `A`
+- Selected Tailwind CSS for styling solution
+
+**Prompt:** `A`
+- Selected React Hook Form for form handling and validation
+
+**Prompt:** `A`
+- Selected Axios for HTTP client (frontend API calls)
+
+**Prompt:** `A`
+- Selected React Router v6 for frontend routing
+
+**Prompt:** `A`
+- Selected date-fns for date/time handling
+
+**Prompt:** `y`
+- Approved error handling strategy (global error middleware, toast notifications, error boundaries)
+
+**Prompt:** `y`
+- Approved API response format (standardized success/error structure)
+
+**Prompt:** `y`
+- Approved implementation patterns (naming conventions, file organization)
