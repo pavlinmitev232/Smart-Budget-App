@@ -1,9 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir -p \"C:\\Users\\User1\\Desktop\\Smart budget App\\Smart-Budget-App\\docs\")",
-      "Bash(cat \"C:\\Users\\User1\\Desktop\\Smart budget App\\Smart-Budget-App\\prompts.md\")",
-      "Bash(find \"C:\\Users\\User1\\Desktop\\Smart budget App\\Smart-Budget-App\\docs\" -type f ( -name \"*prd*.md\" -o -name \"*tech-spec*.md\" -o -name \"*epic*.md\" -o -name \"*architecture*.md\" -o -name \"*ux*.md\" -o -name \"*brief*.md\" -o -name \"*research*.md\" -o -name \"*brainstorm*.md\" ))"
+      "Bash(powershell -Command \"try { Invoke-WebRequest -Uri http://localhost:5000/nonexistent -UseBasicParsing } catch { Write-Host ''Status:'' $_.Exception.Response.StatusCode.value__; Write-Host ''Body:''; ($_.ErrorDetails.Message) }\")"
     ],
     "deny": [],
     "ask": []
