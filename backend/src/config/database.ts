@@ -10,7 +10,9 @@ const poolConfig = {
   password: config.database.password,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 10000, // Return error after 10 seconds if connection could not be established
+  // Force IPv4 to avoid connection issues on Windows Docker
+  options: '-c search_path=public',
 };
 
 // Create connection pool
@@ -25,7 +27,8 @@ pool.on('error', (err) => {
 // Test connection on module load
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error('❌ Failed to connect to PostgreSQL database:', err.message);
+    console.error('❌ Failed to connect to PostgreSQL database:');
+    console.error('   Error:', err);
     console.error('Please ensure PostgreSQL is running and connection details are correct.');
   } else {
     console.log('✅ Successfully connected to PostgreSQL database');

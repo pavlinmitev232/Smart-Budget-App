@@ -2,8 +2,9 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { config, logConfigInfo } from './config/env';
-import './config/database'; // Initialize database connection
+import './config/database'; // Initialize database connection (port 54321)
 import healthRouter from './routes/health';
+import authRouter from './routes/auth';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sendSuccess } from './utils/response';
 
@@ -40,6 +41,7 @@ app.use(express.json());
 
 // Health check and API routes
 app.use('/api', healthRouter);
+app.use('/api/auth', authRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -49,6 +51,7 @@ app.get('/', (req: Request, res: Response) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
+      register: '/api/auth/register',
     },
   });
 });
