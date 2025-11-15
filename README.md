@@ -1,206 +1,461 @@
-# Smart Budget App
+# Smart Budget App 💰
 
-A modern personal finance management application built with React, Express, and PostgreSQL.
+A modern, full-stack personal finance management application that helps you track income and expenses, visualize spending patterns, and gain insights into your financial habits.
 
-## 📋 Overview
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Status](https://img.shields.io/badge/status-complete-success.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-Smart Budget App helps users track income and expenses, categorize transactions, and visualize spending patterns through interactive dashboards. Transform messy financial data into clear, actionable insights.
+---
+
+## 📋 What Does This App Do?
+
+**Smart Budget App** is a comprehensive personal finance tracker that helps you:
+
+- ✅ **Track Transactions** - Record income and expenses with detailed categorization
+- 📊 **Visualize Spending** - Interactive charts showing expense distribution, trends, and category breakdowns
+- 💳 **Manage Categories** - 15 predefined categories (5 income, 10 expense) with emoji icons
+- 🔐 **Secure Authentication** - JWT-based user authentication with password hashing
+- 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
+- 🔍 **Advanced Filtering** - Filter transactions by type, category, and date range with pagination
+- 📈 **Financial Dashboard** - Real-time metrics: total income, expenses, net balance, and transaction counts
+- 🌓 **Smart Empty States** - Helpful guidance for new users with onboarding tips
+- ⚡ **Real-time Updates** - Instant feedback with toast notifications and loading states
+- 🛡️ **Error Handling** - Comprehensive error boundaries and recovery options
+
+---
 
 ## 🚀 Tech Stack
 
 ### Frontend
-- **React 18+** - UI library
-- **TypeScript** - Type-safe development
-- **Vite 7.2** - Fast build tool with HMR
-- **Tailwind CSS** - Utility-first styling (to be added)
-- **React Hook Form** - Form management (to be added)
-- **Recharts** - Data visualization (to be added)
+- **React 18** with **TypeScript** - Type-safe UI development
+- **Vite 7.2** - Lightning-fast build tool with Hot Module Replacement
+- **Tailwind CSS 3.4** - Utility-first styling framework
+- **React Router v6** - Client-side routing
+- **React Hook Form 7.66** - Performant form validation
+- **Recharts** - Interactive data visualization charts
+- **React Toastify** - Toast notifications
+- **Axios** - HTTP client for API requests
+- **date-fns** - Date formatting and manipulation
 
 ### Backend
-- **Express.js** - Web framework
-- **TypeScript** - Type-safe development
+- **Express.js** - Web application framework
+- **TypeScript** - Type-safe server development
 - **PostgreSQL 14+** - Relational database
-- **Prisma** - Type-safe ORM (to be added)
-- **JWT** - Authentication (to be added)
-- **bcrypt** - Password hashing (to be added)
+- **Prisma ORM** - Type-safe database queries
+- **JWT (jsonwebtoken)** - Secure authentication tokens
+- **bcrypt** - Password hashing
+- **Zod** - Runtime type validation
+
+### Development
+- **Concurrently** - Run multiple servers simultaneously
+- **Nodemon** - Auto-restart on file changes
+- **Prettier** - Code formatting
+
+---
 
 ## 📦 Prerequisites
 
-Before you begin, ensure you have the following installed:
+Before you begin, ensure you have installed:
 
-- **Node.js** 20.19+ or 22.12+ (required for Vite 7)
-  - Check version: `node --version`
-  - Download: [nodejs.org](https://nodejs.org/)
+### Required Software
 
-- **PostgreSQL 14+** (will be needed in Story 1.2)
-  - Check version: `psql --version`
-  - Download: [postgresql.org](https://www.postgresql.org/download/)
+1. **Node.js** (v20.19+ or v22.12+)
+   - Check: `node --version`
+   - Download: [nodejs.org](https://nodejs.org/)
 
-- **npm** (comes with Node.js)
-  - Check version: `npm --version`
+2. **PostgreSQL** (v14 or higher)
+   - Check: `psql --version`
+   - Download: [postgresql.org](https://www.postgresql.org/download/)
+   - **OR** use Docker (recommended): `docker --version`
 
-- **Git** (for version control)
-  - Check version: `git --version`
+3. **npm** (comes with Node.js)
+   - Check: `npm --version`
 
-## 🛠️ Installation
+4. **Git** (for cloning the repository)
+   - Check: `git --version`
+   - Download: [git-scm.com](https://git-scm.com/)
 
-### 1. Clone the Repository
+---
 
-\`\`\`bash
+## 🛠️ Local Development Setup
+
+Follow these steps to get the app running on your local machine:
+
+### Step 1: Clone the Repository
+
+```bash
 git clone <repository-url>
 cd smart-budget-app
-\`\`\`
+```
 
-### 2. Install Dependencies
+### Step 2: Install Dependencies
 
-Install root dependencies:
-\`\`\`bash
+Install all dependencies (root, frontend, and backend):
+
+```bash
+# Install root dependencies
 npm install
-\`\`\`
 
-Install frontend dependencies:
-\`\`\`bash
+# Install frontend dependencies
 cd frontend
 npm install
 cd ..
-\`\`\`
 
-Install backend dependencies:
-\`\`\`bash
+# Install backend dependencies
 cd backend
 npm install
 cd ..
-\`\`\`
+```
 
-### 3. Environment Configuration (Story 1.4)
+### Step 3: Set Up PostgreSQL Database
 
-Create a \`.env\` file in the backend directory:
-\`\`\`bash
-cp backend/.env.example backend/.env
-\`\`\`
+**Option A: Using Docker (Recommended)**
 
-Update the \`.env\` file with your local configuration.
+```bash
+# Start PostgreSQL in Docker
+docker run --name smart-budget-db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=smart_budget \
+  -p 5432:5432 \
+  -d postgres:14
 
-## 🚦 Development
+# Verify it's running
+docker ps
+```
 
-### Run Both Servers Concurrently
+**Option B: Using Local PostgreSQL**
 
-\`\`\`bash
+```bash
+# Connect to PostgreSQL
+psql -U postgres
+
+# Create database
+CREATE DATABASE smart_budget;
+
+# Exit
+\q
+```
+
+### Step 4: Configure Environment Variables
+
+Create a `.env` file in the `backend` directory:
+
+```bash
+# From project root
+cd backend
+cp .env.example .env
+```
+
+Edit `backend/.env` with your database credentials:
+
+```env
+# Database
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/smart_budget?schema=public"
+
+# JWT Secret (use a strong random string)
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+
+# Server Port
+PORT=5000
+
+# Node Environment
+NODE_ENV=development
+```
+
+### Step 5: Initialize Database Schema
+
+Run Prisma migrations to create database tables:
+
+```bash
+cd backend
+npx prisma migrate deploy
+cd ..
+```
+
+**Optional:** View your database in Prisma Studio:
+
+```bash
+cd backend
+npx prisma studio
+# Opens at http://localhost:5555
+```
+
+### Step 6: Start the Application
+
+**Start Both Servers (Recommended):**
+
+```bash
+# From project root
 npm run dev
-\`\`\`
+```
 
-This starts:
+This command starts:
 - **Frontend**: http://localhost:3000
 - **Backend**: http://localhost:5000
 
-### Run Servers Individually
+**Or Start Individually:**
 
-Frontend only:
-\`\`\`bash
+```bash
+# Frontend only
 npm run dev:frontend
-\`\`\`
 
-Backend only:
-\`\`\`bash
+# Backend only
 npm run dev:backend
-\`\`\`
+```
 
-### Code Formatting
+### Step 7: Access the Application
 
-Format all code:
-\`\`\`bash
-npm run format
-\`\`\`
+1. Open your browser and navigate to **http://localhost:3000**
+2. Click **"Create a new account"** to register
+3. Fill in email and password (min 8 characters)
+4. After registration, you'll be redirected to the dashboard
+5. Start adding transactions!
 
-Check formatting:
-\`\`\`bash
-npm run format:check
-\`\`\`
+---
 
-## 📁 Project Structure
+## 📱 Using the Application
 
-\`\`\`
+### First-Time User Flow
+
+1. **Register** → Create your account with email and password
+2. **Dashboard** → See the welcome screen with quick start tips
+3. **Add Transaction** → Click the button to add your first transaction
+4. **View Insights** → Charts and metrics automatically populate as you add more transactions
+
+### Key Features to Explore
+
+- **Dashboard** - Financial summary with interactive charts
+- **Transactions** - Full CRUD operations (Create, Read, Update, Delete)
+- **Filtering** - Filter by transaction type, category, and date range
+- **Mobile Navigation** - Try the hamburger menu on smaller screens
+
+---
+
+## 🏗️ Project Structure
+
+```
 smart-budget-app/
-├── frontend/                # React + Vite + TypeScript
+├── frontend/                 # React application
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Page components (route targets)
-│   │   ├── contexts/        # React Context providers
-│   │   ├── services/        # API client, utilities
-│   │   ├── types/           # TypeScript interfaces
-│   │   ├── App.tsx          # Main app component
-│   │   └── main.tsx         # Application entry point
-│   ├── public/              # Static assets
-│   ├── index.html           # HTML template
-│   ├── vite.config.ts       # Vite configuration
-│   ├── tsconfig.json        # TypeScript configuration
-│   └── package.json         # Frontend dependencies
+│   │   ├── components/       # Reusable UI components
+│   │   │   ├── dashboard/    # Dashboard-specific components
+│   │   │   ├── transactions/ # Transaction-specific components
+│   │   │   ├── Navigation.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   └── ErrorFallback.tsx
+│   │   ├── pages/            # Page components
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── Transactions.tsx
+│   │   │   ├── Login.tsx
+│   │   │   └── Register.tsx
+│   │   ├── context/          # React Context (Auth)
+│   │   ├── services/         # API client (Axios)
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── utils/            # Utility functions
+│   │   ├── types/            # TypeScript types
+│   │   └── App.tsx
+│   └── package.json
 │
-├── backend/                 # Express + TypeScript
+├── backend/                  # Express API server
 │   ├── src/
-│   │   ├── features/        # Feature-based modules
-│   │   │   ├── auth/        # Authentication feature
-│   │   │   ├── transactions/# Transactions feature
-│   │   │   └── analytics/   # Analytics feature
-│   │   ├── middleware/      # Express middleware
-│   │   ├── utils/           # Shared utilities
-│   │   ├── types/           # TypeScript interfaces
-│   │   └── index.ts         # Express server entry point
-│   ├── tsconfig.json        # TypeScript configuration
-│   └── package.json         # Backend dependencies
+│   │   ├── features/         # Feature-based architecture
+│   │   │   ├── auth/         # Authentication endpoints
+│   │   │   ├── categories/   # Category endpoints
+│   │   │   ├── transactions/ # Transaction CRUD
+│   │   │   └── analytics/    # Analytics endpoints
+│   │   ├── middleware/       # Express middleware
+│   │   │   └── auth.ts       # JWT authentication
+│   │   ├── utils/            # Utility functions
+│   │   └── index.ts          # Server entry point
+│   ├── prisma/
+│   │   ├── schema.prisma     # Database schema
+│   │   └── migrations/       # Database migrations
+│   ├── .env                  # Environment variables (create this)
+│   └── package.json
 │
-├── docs/                    # Project documentation
-│   ├── PRD.md              # Product Requirements Document
-│   ├── architecture.md     # Architecture decisions
-│   └── epics.md            # Epic and story breakdown
+├── docs/                     # Project documentation
+│   ├── PRD.md               # Product Requirements
+│   ├── architecture.md      # Technical decisions
+│   └── epics.md             # Feature breakdown
 │
-├── .bmad/                  # BMad Method framework
-├── .bmad-ephemeral/        # Story files and sprint tracking
-├── .gitignore              # Git ignore rules
-├── .prettierrc             # Prettier configuration
-├── package.json            # Root workspace configuration
-└── README.md               # This file
-\`\`\`
+├── .bmad/                   # BMad Method framework
+├── .bmad-ephemeral/         # Story files (29 stories)
+├── package.json             # Root workspace config
+└── README.md                # This file
+```
 
-## 🧪 Testing (To Be Added)
+---
 
-Testing infrastructure will be added in future stories.
+## 🧪 Available Scripts
 
-## 🏗️ Build for Production (To Be Added)
+### Root Commands (run from project root)
 
-Production build scripts will be added in future stories.
+```bash
+npm run dev              # Start both frontend and backend
+npm run dev:frontend     # Start frontend only (port 3000)
+npm run dev:backend      # Start backend only (port 5000)
+npm run format           # Format all code with Prettier
+npm run format:check     # Check code formatting
+```
 
-## 📝 Development Workflow
+### Backend Commands (run from `backend/` directory)
 
-This project follows the **BMad Method** (BMM) for AI-powered agile development:
+```bash
+npm run dev              # Start backend with nodemon
+npm run build            # Compile TypeScript
+npm start                # Run compiled JavaScript
+npx prisma studio        # Open Prisma Studio (database GUI)
+npx prisma migrate dev   # Create new migration
+npx prisma generate      # Regenerate Prisma Client
+```
 
-1. **Epic Planning** - Break down features into epics
-2. **Story Creation** - Create detailed user stories
-3. **Implementation** - Develop stories sequentially
-4. **Review & Testing** - Code review and validation
-5. **Completion** - Mark stories done and iterate
+### Frontend Commands (run from `frontend/` directory)
 
-Current sprint status: `.bmad-ephemeral/sprint-status.yaml`
+```bash
+npm run dev              # Start Vite dev server
+npm run build            # Build for production
+npm run preview          # Preview production build
+npm run lint             # Run ESLint
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Database Connection Issues
+
+**Error:** `Can't reach database server`
+
+**Solution:**
+```bash
+# Check if PostgreSQL is running
+docker ps                              # For Docker
+pg_isready -h localhost -p 5432       # For local PostgreSQL
+
+# Restart PostgreSQL
+docker restart smart-budget-db        # For Docker
+sudo service postgresql restart       # For Linux
+brew services restart postgresql@14   # For macOS with Homebrew
+```
+
+### Port Already in Use
+
+**Error:** `Port 3000 (or 5000) is already in use`
+
+**Solution:**
+```bash
+# Find and kill the process
+lsof -ti:3000 | xargs kill           # macOS/Linux
+netstat -ano | findstr :3000          # Windows (find PID, then taskkill /PID <pid> /F)
+
+# Or change the port in vite.config.ts (frontend) or .env (backend)
+```
+
+### Missing Dependencies
+
+**Error:** `Cannot find module...`
+
+**Solution:**
+```bash
+# Reinstall all dependencies
+npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
+```
+
+### Prisma Schema Changes Not Reflected
+
+**Solution:**
+```bash
+cd backend
+npx prisma generate              # Regenerate Prisma Client
+npx prisma migrate deploy        # Apply migrations
+```
+
+---
+
+## 🌐 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user (protected)
+
+### Categories
+- `GET /api/categories` - Get all categories
+
+### Transactions
+- `POST /api/transactions` - Create transaction (protected)
+- `GET /api/transactions` - List transactions with filters (protected)
+- `PUT /api/transactions/:id` - Update transaction (protected)
+- `DELETE /api/transactions/:id` - Delete transaction (protected)
+
+### Analytics
+- `GET /api/analytics/summary` - Financial summary (protected)
+- `GET /api/analytics/category-breakdown` - Category spending breakdown (protected)
+- `GET /api/analytics/trends` - Income/expense trends over time (protected)
+
+---
+
+## 📊 Development Status
+
+**Project Status:** ✅ **COMPLETE** (All 5 Epics Implemented)
+
+| Epic | Description | Stories | Status |
+|------|-------------|---------|--------|
+| Epic 1 | Project Foundation & Infrastructure | 5/5 | ✅ Done |
+| Epic 2 | User Authentication & Access Control | 6/6 | ✅ Done |
+| Epic 3 | Transaction Management & Categories | 6/6 | ✅ Done |
+| Epic 4 | Financial Dashboard & Analytics | 6/6 | ✅ Done |
+| Epic 5 | User Experience & Polish | 6/6 | ✅ Done |
+
+**Total:** 29 user stories completed
+
+View detailed sprint status: `.bmad-ephemeral/sprint-status.yaml`
+
+---
 
 ## 🤝 Contributing
 
-This project is developed using AI-assisted development with the BMad Method. For contribution guidelines, please refer to the project documentation.
+This project was developed using the **BMad Method** (BMM), an AI-powered agile development framework. All features were implemented following user stories with strict acceptance criteria.
+
+For contribution guidelines and development workflow, see:
+- `.bmad/bmm/docs/` - BMad Method documentation
+- `docs/PRD.md` - Product requirements
+- `docs/architecture.md` - Technical decisions
+
+---
 
 ## 📄 License
 
-[To be added]
+MIT License - See LICENSE file for details
 
-## 🔗 Resources
+---
 
-- [React Documentation](https://react.dev/)
-- [Vite Documentation](https://vite.dev/)
-- [Express Documentation](https://expressjs.com/)
-- [TypeScript Documentation](https://www.typescriptlang.org/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [BMad Method Documentation](.bmad/bmm/docs/)
+## 🙏 Acknowledgments
+
+- Built with the [BMad Method](https://github.com/anthropics/bmad-method) for AI-assisted development
+- Developed using Claude Code (Anthropic)
+- Icons from Heroicons
+- Charts powered by Recharts
+
+---
+
+## 📞 Support
+
+For issues, questions, or feature requests:
+- Check the troubleshooting section above
+- Review the documentation in `docs/`
+- Open an issue on GitHub
 
 ---
 
 **Version:** 1.0.0
-**Last Updated:** 2025-11-13
-**Status:** Story 1.1 Complete - Project Structure Initialized
+**Last Updated:** 2025-11-16
+**Status:** Production Ready ✅
+
+---
+
+**Happy Budgeting! 💰📊**

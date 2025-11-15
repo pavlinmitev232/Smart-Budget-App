@@ -1116,3 +1116,21 @@ All stories marked as "drafted" in sprint-status.yaml
 - User confirms bug is fixed
 - Category dropdown now works correctly with visible text and proper type filtering
 - User requests to mark Story 5.6 as complete
+
+**Story 5.6 Completion:**
+- Date: 2025-11-16
+- Agent: Amelia (DEV)
+- Story: 5.6 - Add Empty States and Onboarding Guidance
+- Status: in-progress → done
+- All 8 tasks completed, all 6 AC met
+- Bug fixed: Category dropdown data transformation
+- Files created: EmptyState.tsx
+- Files modified: Transactions.tsx, Dashboard.tsx
+- Sprint status updated: Story 5.6 marked as done
+- EPIC 5 COMPLETE: All 6 stories done (29/29 total stories across all 5 epics)
+
+**Prompt:** `now its time to update the readme file correctly with everything what is the what it does, and  a section simplied section where we explain clearly step by step how to a dev can run the app fully locally`
+- User requests comprehensive README update
+- Should include: project description, features, tech stack
+- Must include: simplified step-by-step local setup guide for developers
+- Goal: Make it easy for any developer to clone and run the app locally
