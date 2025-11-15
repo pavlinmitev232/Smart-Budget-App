@@ -57,12 +57,12 @@ development_status:
 
   # Epic 3: Transaction Management & Categories
   epic-3: backlog
-  3-1-implement-categories-api-with-predefined-list: backlog
-  3-2-implement-create-transaction-api-endpoint: backlog
-  3-3-implement-get-transactions-api-with-pagination-and-filtering: backlog
-  3-4-implement-update-and-delete-transaction-api-endpoints: backlog
-  3-5-build-transaction-form-component-create-edit-mode: backlog
-  3-6-build-transaction-list-with-filtering-and-actions: backlog
+  3-1-implement-categories-api-with-predefined-list: done
+  3-2-implement-create-transaction-api-endpoint: done
+  3-3-implement-get-transactions-api-with-pagination-and-filtering: done
+  3-4-implement-update-and-delete-transaction-api-endpoints: done
+  3-5-build-transaction-form-component-create-edit-mode: done
+  3-6-build-transaction-list-with-filtering-and-actions: done
   epic-3-retrospective: optional
 
   # Epic 4: Financial Dashboard & Analytics
