@@ -38,12 +38,6 @@ export default function Navigation() {
                 >
                   Transactions
                 </Link>
-                <Link
-                  to="/analytics"
-                  className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Analytics
-                </Link>
 
                 {/* User Info & Logout */}
                 <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-gray-200">

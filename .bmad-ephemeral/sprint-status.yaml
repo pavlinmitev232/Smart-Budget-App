@@ -67,12 +67,12 @@ development_status:
 
   # Epic 4: Financial Dashboard & Analytics
   epic-4: backlog
-  4-1-implement-analytics-api-endpoints-for-dashboard-data: backlog
-  4-2-build-dashboard-summary-cards-with-real-time-metrics: backlog
-  4-3-build-expense-distribution-pie-chart: backlog
-  4-4-build-income-vs-expenses-trend-chart: backlog
-  4-5-build-category-spending-bar-chart: backlog
-  4-6-implement-custom-date-range-picker-for-analytics: backlog
+  4-1-implement-analytics-api-endpoints-for-dashboard-data: done
+  4-2-build-dashboard-summary-cards-with-real-time-metrics: done
+  4-3-build-expense-distribution-pie-chart: done
+  4-4-build-income-vs-expenses-trend-chart: done
+  4-5-build-category-spending-bar-chart: done
+  4-6-implement-custom-date-range-picker-for-analytics: done
   epic-4-retrospective: optional
 
   # Epic 5: User Experience & Polish

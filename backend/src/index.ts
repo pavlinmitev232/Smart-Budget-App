@@ -7,6 +7,7 @@ import healthRouter from './routes/health';
 import authRouter from './routes/auth';
 import categoriesRouter from './features/categories/categories.routes';
 import transactionsRouter from './features/transactions/transactions.routes';
+import analyticsRouter from './features/analytics/analytics.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sendSuccess } from './utils/response';
 
@@ -46,6 +47,7 @@ app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/transactions', transactionsRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -58,6 +60,7 @@ app.get('/', (req: Request, res: Response) => {
       register: '/api/auth/register',
       categories: '/api/categories',
       transactions: '/api/transactions',
+      analytics: '/api/analytics',
     },
   });
 });
