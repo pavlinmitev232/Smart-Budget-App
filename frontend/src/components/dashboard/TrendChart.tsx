@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import api from '../../services/api';
+import { Spinner } from '../Spinner';
 
 interface TrendData {
   period: string;
@@ -154,7 +155,10 @@ export default function TrendChart({
           Income vs Expenses
         </h3>
         <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            Loading income vs expenses trend chart...
+          </div>
+          <Spinner className="h-12 w-12 text-indigo-600" />
         </div>
       </div>
     );

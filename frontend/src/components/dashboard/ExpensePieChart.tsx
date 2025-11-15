@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from 'recharts';
 import api from '../../services/api';
+import { Spinner } from '../Spinner';
 
 // Colorblind-friendly palette
 const COLORS = [
@@ -124,7 +125,10 @@ export default function ExpensePieChart({
           Expense Distribution
         </h3>
         <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            Loading expense distribution chart...
+          </div>
+          <Spinner className="h-12 w-12 text-indigo-600" />
         </div>
       </div>
     );

@@ -10,6 +10,7 @@ import {
   Cell,
 } from 'recharts';
 import api from '../../services/api';
+import { Spinner } from '../Spinner';
 
 interface CategoryData {
   category: string;
@@ -112,7 +113,10 @@ export default function CategoryBarChart({
           Top Spending Categories
         </h3>
         <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            Loading category spending chart...
+          </div>
+          <Spinner className="h-12 w-12 text-indigo-600" />
         </div>
       </div>
     );

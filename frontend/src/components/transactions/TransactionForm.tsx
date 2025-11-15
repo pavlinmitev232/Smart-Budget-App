@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import api from '../../services/api';
+import { showSuccess, showError } from '../../utils/toast';
+import { Spinner } from '../Spinner';
 
 /**
  * Transaction form data structure
@@ -136,9 +138,11 @@ export default function TransactionForm({
       if (mode === 'create') {
         // POST /api/transactions
         await api.post('/transactions', cleanedData);
+        showSuccess('Transaction added successfully');
       } else if (mode === 'edit' && transaction) {
         // PUT /api/transactions/:id
         await api.put(`/transactions/${transaction.id}`, cleanedData);
+        showSuccess('Transaction updated successfully');
       }
 
       // Success! Close form and trigger parent refresh
@@ -146,8 +150,9 @@ export default function TransactionForm({
     } catch (error: any) {
       console.error('Error submitting transaction:', error);
       const errorMessage =
-        error.response?.data?.error?.message || 'Failed to save transaction';
+        error.response?.data?.error?.message || 'Failed to save transaction. Please try again.';
       setApiError(errorMessage);
+      showError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -222,7 +227,9 @@ export default function TransactionForm({
                   min: { value: 0.01, message: 'Amount must be greater than 0' },
                   valueAsNumber: true, // Convert string to number for API
                 })}
-                className="pl-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                className={`pl-8 w-full px-3 py-2 border ${
+                  errors.amount ? 'border-red-300' : 'border-gray-300'
+                } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
                 placeholder="0.00"
               />
             </div>
@@ -239,7 +246,9 @@ export default function TransactionForm({
             <select
               id="category"
               {...register('category', { required: 'Category is required' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              className={`w-full px-3 py-2 border ${
+                errors.category ? 'border-red-300' : 'border-gray-300'
+              } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select a category</option>
               {filteredCategories.map((category) => (
@@ -262,7 +271,9 @@ export default function TransactionForm({
               type="date"
               id="date"
               {...register('date', { required: 'Date is required' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              className={`w-full px-3 py-2 border ${
+                errors.date ? 'border-red-300' : 'border-gray-300'
+              } rounded-md focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.date && (
               <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
@@ -314,26 +325,7 @@ export default function TransactionForm({
             >
               {isSubmitting ? (
                 <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
+                  <Spinner className="h-4 w-4 text-white mr-2" />
                   Saving...
                 </>
               ) : (

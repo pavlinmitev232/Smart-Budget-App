@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { showSuccess, showError } from '../utils/toast';
 import type { LoginFormData } from '../types/auth';
+import { Spinner } from '../components/Spinner';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,6 +37,9 @@ export default function Login() {
         // Update auth context
         login(token, user);
 
+        // Show success toast
+        showSuccess('Welcome back!');
+
         // Redirect to dashboard
         navigate('/dashboard');
       }
@@ -43,9 +48,13 @@ export default function Login() {
 
       if (error.response?.data?.error) {
         const errorData = error.response.data.error;
-        setApiError(errorData.message || 'Login failed. Please try again.');
+        const errorMessage = errorData.message || 'Login failed. Please try again.';
+        setApiError(errorMessage);
+        showError(errorMessage);
       } else {
-        setApiError('Network error. Please check your connection.');
+        const networkError = 'Connection lost. Please check your internet.';
+        setApiError(networkError);
+        showError(networkError);
       }
     }
   };
@@ -200,26 +209,7 @@ export default function Login() {
             >
               {isLoading ? (
                 <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <Spinner className="h-5 w-5 text-white mr-3" />
                   Logging in...
                 </>
               ) : (

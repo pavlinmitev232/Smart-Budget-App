@@ -162,7 +162,11 @@
       "Bash(node -e \"const d=JSON.parse(require(''''fs'''').readFileSync(0,''''utf-8'''')); console.log(''''This Year period:'''', d.success ? ''''PASS'''' : ''''FAIL'''', ''''- Total:'''', d.data?.totalIncome, ''''+'''', d.data?.totalExpenses);\")",
       "Bash(echo \"  API returns: 9 transactions, Income: $5750.50, Expenses: $1075.50\")",
       "Bash(echo \"  - DatePicker component validates end >= start: ✓ (in component logic)\")",
-      "Bash(echo \"  - End >= start validation: ✓\")"
+      "Bash(echo \"  - End >= start validation: ✓\")",
+      "Bash(npm install react-toastify)",
+      "Bash(npm install react-loading-skeleton)",
+      "Bash(npm install react-error-boundary)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

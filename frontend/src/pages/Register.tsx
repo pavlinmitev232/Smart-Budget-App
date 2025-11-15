@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
+import { showSuccess, showError } from '../utils/toast';
 import type { RegisterFormData } from '../types/auth';
+import { Spinner } from '../components/Spinner';
 
 interface PasswordRequirement {
   label: string;
@@ -39,6 +41,9 @@ export default function Register() {
       const response = await api.post('/auth/register', data);
 
       if (response.data.success) {
+        // Show success toast
+        showSuccess('Account created successfully!');
+
         // Redirect to login with success message
         navigate('/login', {
           state: { message: 'Account created! Please log in.' },
@@ -52,12 +57,18 @@ export default function Register() {
 
         // Handle duplicate email error
         if (error.response.status === 409 || errorData.code === 'DUPLICATE_EMAIL') {
-          setApiError('Email already registered. Please login.');
+          const duplicateError = 'Email already registered. Please login.';
+          setApiError(duplicateError);
+          showError(duplicateError);
         } else {
-          setApiError(errorData.message || 'Registration failed. Please try again.');
+          const errorMessage = errorData.message || 'Registration failed. Please try again.';
+          setApiError(errorMessage);
+          showError(errorMessage);
         }
       } else {
-        setApiError('Network error. Please check your connection.');
+        const networkError = 'Connection lost. Please check your internet.';
+        setApiError(networkError);
+        showError(networkError);
       }
     }
   };
@@ -262,26 +273,7 @@ export default function Register() {
             >
               {isLoading ? (
                 <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <Spinner className="h-5 w-5 text-white mr-3" />
                   Creating account...
                 </>
               ) : (

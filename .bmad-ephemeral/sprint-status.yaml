@@ -77,10 +77,10 @@ development_status:
 
   # Epic 5: User Experience & Polish
   epic-5: backlog
-  5-1-implement-responsive-layout-and-mobile-navigation: backlog
-  5-2-build-global-navigation-with-active-state-indicators: backlog
-  5-3-implement-toast-notifications-for-user-feedback: backlog
-  5-4-add-loading-states-and-skeleton-screens: backlog
-  5-5-implement-comprehensive-error-handling-and-error-boundaries: backlog
-  5-6-add-empty-states-and-onboarding-guidance: backlog
+  5-1-implement-responsive-layout-and-mobile-navigation: done
+  5-2-build-global-navigation-with-active-state-indicators: done
+  5-3-implement-toast-notifications-for-user-feedback: done
+  5-4-add-loading-states-and-skeleton-screens: done
+  5-5-implement-comprehensive-error-handling-and-error-boundaries: done
+  5-6-add-empty-states-and-onboarding-guidance: done
   epic-5-retrospective: optional

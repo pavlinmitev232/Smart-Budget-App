@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SummaryCard from '../components/dashboard/SummaryCard';
+import SummaryCardSkeleton from '../components/dashboard/SummaryCardSkeleton';
 import TimePeriodSelector from '../components/dashboard/TimePeriodSelector';
 import CustomDateRangePicker from '../components/dashboard/CustomDateRangePicker';
 import ExpensePieChart from '../components/dashboard/ExpensePieChart';
 import TrendChart from '../components/dashboard/TrendChart';
 import CategoryBarChart from '../components/dashboard/CategoryBarChart';
+import EmptyState from '../components/EmptyState';
 import api from '../services/api';
 import { startOfMonth, subDays, subMonths, startOfYear, format, parse, isValid } from 'date-fns';
 
@@ -259,43 +261,86 @@ export default function Dashboard() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          </div>
+          <>
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
+              Loading dashboard data...
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+            </div>
+          </>
         )}
 
         {/* Summary Cards */}
         {!isLoading && summaryData && (
           <>
             {summaryData.transactionCount === 0 ? (
-              /* Empty State */
-              <div className="bg-white shadow rounded-lg p-12 text-center">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              /* Empty State - New User Welcome */
+              <div className="bg-white shadow rounded-lg overflow-hidden">
+                {/* Welcome Header */}
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8 text-center">
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Welcome to Smart Budget App!
+                  </h2>
+                  <p className="text-indigo-100">
+                    Take control of your finances with smart tracking and insights
+                  </p>
+                </div>
+
+                {/* Empty State Content */}
+                <div className="p-8">
+                  <EmptyState
+                    icon={
+                      <svg
+                        className="h-16 w-16"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                        />
+                      </svg>
+                    }
+                    title="No transactions yet"
+                    message="Start tracking your finances by adding your first transaction. Record income, expenses, and see your spending patterns come to life."
+                    buttonText="Add Your First Transaction"
+                    onButtonClick={() => navigate('/transactions')}
                   />
-                </svg>
-                <h3 className="mt-2 text-lg font-medium text-gray-900">
-                  No transactions yet
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Get started by adding your first transaction
-                </p>
-                <div className="mt-6">
-                  <button
-                    onClick={() => navigate('/transactions')}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Add Transaction
-                  </button>
+
+                  {/* Quick Start Tips */}
+                  <div className="mt-8 pt-8 border-t border-gray-200">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4 text-center">
+                      Quick Start Tips
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mb-2">
+                          1
+                        </div>
+                        <p className="text-gray-600">Add your transactions</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mb-2">
+                          2
+                        </div>
+                        <p className="text-gray-600">Track your spending</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mb-2">
+                          3
+                        </div>
+                        <p className="text-gray-600">View insights & trends</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

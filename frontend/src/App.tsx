@@ -1,7 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ErrorBoundary } from 'react-error-boundary';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { useNetworkStatus } from './hooks/useNetworkStatus';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorFallback from './components/ErrorFallback';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -90,6 +95,9 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  // Enable network status monitoring
+  useNetworkStatus();
+
   return (
     <>
       <Navigation />
@@ -141,12 +149,42 @@ function AppRoutes() {
 }
 
 function App() {
+  const handleError = (error: Error, info: { componentStack: string }) => {
+    // Log error to console in development
+    console.error('Error caught by boundary:', error);
+    console.error('Component stack:', info.componentStack);
+
+    // In production, you would send this to an error tracking service
+    // Example: Sentry.captureException(error);
+  };
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onError={handleError}
+      onReset={() => {
+        // Reset app state if needed
+        window.location.href = '/';
+      }}
+    >
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
