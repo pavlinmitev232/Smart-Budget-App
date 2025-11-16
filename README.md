@@ -42,14 +42,14 @@ A modern, full-stack personal finance management application that helps you trac
 - **Express.js** - Web application framework
 - **TypeScript** - Type-safe server development
 - **PostgreSQL 14+** - Relational database
-- **Prisma ORM** - Type-safe database queries
+- **node-pg** - PostgreSQL client for Node.js
+- **node-pg-migrate** - Database migration tool
 - **JWT (jsonwebtoken)** - Secure authentication tokens
 - **bcrypt** - Password hashing
-- **Zod** - Runtime type validation
 
 ### Development
 - **Concurrently** - Run multiple servers simultaneously
-- **Nodemon** - Auto-restart on file changes
+- **tsx** - TypeScript execution with hot reload
 - **Prettier** - Code formatting
 
 ---
@@ -110,33 +110,75 @@ cd ..
 
 ### Step 3: Set Up PostgreSQL Database
 
-**Option A: Using Docker (Recommended)**
+**⚠️ IMPORTANT: Choose ONE option below** - Using both simultaneously will cause port conflicts!
+
+---
+
+#### **Option A: Using Docker Compose (Recommended for Development)**
+
+Docker Compose runs PostgreSQL in an isolated container on **port 54320** (non-standard port to avoid conflicts with local PostgreSQL installations).
 
 ```bash
-# Start PostgreSQL in Docker
-docker run --name smart-budget-db \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=smart_budget \
-  -p 5432:5432 \
-  -d postgres:14
+# Start PostgreSQL with Docker Compose
+docker-compose up -d postgres
 
 # Verify it's running
 docker ps
+
+# Check logs if needed
+docker logs smart-budget-db
 ```
 
-**Option B: Using Local PostgreSQL**
+**Environment Configuration for Docker:**
+```env
+# backend/.env
+DB_HOST=localhost
+DB_PORT=54320                    # ← Docker Compose port
+DB_NAME=smart_budget
+DB_USER=smartbudget
+DB_PASSWORD=dev_password_123
+DATABASE_URL=postgresql://smartbudget:dev_password_123@localhost:54320/smart_budget
+```
+
+**To Stop:**
+```bash
+docker-compose down              # Stop and remove container
+docker-compose down -v           # Stop and remove container + data volume
+```
+
+---
+
+#### **Option B: Using Local PostgreSQL Installation**
+
+If you have PostgreSQL installed locally (typically on **port 5432**), use this option.
 
 ```bash
-# Connect to PostgreSQL
+# Connect to PostgreSQL (default port 5432)
 psql -U postgres
 
 # Create database
 CREATE DATABASE smart_budget;
 
+# Create user (optional, if not using postgres user)
+CREATE USER smartbudget WITH PASSWORD 'dev_password_123';
+GRANT ALL PRIVILEGES ON DATABASE smart_budget TO smartbudget;
+
 # Exit
 \q
 ```
+
+**Environment Configuration for Local PostgreSQL:**
+```env
+# backend/.env
+DB_HOST=localhost
+DB_PORT=5432                     # ← Standard PostgreSQL port
+DB_NAME=smart_budget
+DB_USER=postgres                 # or smartbudget
+DB_PASSWORD=postgres             # your PostgreSQL password
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/smart_budget
+```
+
+---
 
 ### Step 4: Configure Environment Variables
 
@@ -148,39 +190,57 @@ cd backend
 cp .env.example .env
 ```
 
-Edit `backend/.env` with your database credentials:
+Edit `backend/.env` with your database credentials. **Use the configuration matching your database setup from Step 3!**
 
+**For Docker Compose (port 54320):**
 ```env
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/smart_budget?schema=public"
-
-# JWT Secret (use a strong random string)
-JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-
-# Server Port
+# Server Configuration
 PORT=5000
-
-# Node Environment
 NODE_ENV=development
+
+# Database Configuration (Docker Compose)
+DB_HOST=localhost
+DB_PORT=54320
+DB_NAME=smart_budget
+DB_USER=smartbudget
+DB_PASSWORD=dev_password_123
+DATABASE_URL=postgresql://smartbudget:dev_password_123@localhost:54320/smart_budget
+
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 ```
+
+**For Local PostgreSQL (port 5432):**
+```env
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+
+# Database Configuration (Local PostgreSQL)
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=smart_budget
+DB_USER=postgres
+DB_PASSWORD=postgres
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/smart_budget
+
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+```
+
+**⚠️ Critical:** Ensure the port in your `.env` matches your database setup! Wrong port = connection failures.
 
 ### Step 5: Initialize Database Schema
 
-Run Prisma migrations to create database tables:
+Run database migrations to create tables:
 
 ```bash
 cd backend
-npx prisma migrate deploy
+npm run migrate:up
 cd ..
 ```
 
-**Optional:** View your database in Prisma Studio:
-
-```bash
-cd backend
-npx prisma studio
-# Opens at http://localhost:5555
-```
+This will create the necessary tables: `users` and `transactions`.
 
 ### Step 6: Start the Application
 
@@ -212,6 +272,88 @@ npm run dev:backend
 3. Fill in email and password (min 8 characters)
 4. After registration, you'll be redirected to the dashboard
 5. Start adding transactions!
+
+---
+
+## 🔧 Database Setup Troubleshooting
+
+### Port Conflict Resolution
+
+**Problem:** Both Docker and local PostgreSQL default to port 5432, causing conflicts.
+
+**Solution:**
+- Docker Compose uses **port 54320** (mapped from container's 5432)
+- Local PostgreSQL uses **port 5432** (standard)
+- Update `backend/.env` with the correct port for your chosen option
+
+**Check which port is in use:**
+```bash
+# Windows
+netstat -ano | findstr :5432
+netstat -ano | findstr :54320
+
+# macOS/Linux
+lsof -i :5432
+lsof -i :54320
+```
+
+### If Backend Can't Connect to Database
+
+**Symptoms:**
+- `Can't reach database server`
+- `database "smart_budget2" does not exist`
+- Connection errors in backend logs
+
+**Quick Fix:**
+```bash
+# 1. Verify .env has correct port
+cd backend
+cat .env | grep DB_PORT        # Should be 54320 (Docker) or 5432 (Local)
+
+# 2. Check database is running
+docker ps                      # For Docker - should show smart-budget-db
+pg_isready -h localhost -p 5432   # For local PostgreSQL
+
+# 3. IMPORTANT: Restart backend after changing .env
+# The backend caches environment variables on startup!
+# Kill the backend process (Ctrl+C) and restart: npm run dev
+```
+
+### Switching Between Docker and Local PostgreSQL
+
+**To switch from Local → Docker:**
+```bash
+# 1. Stop local PostgreSQL (optional)
+# Windows: Stop PostgreSQL service in Services app
+# macOS: brew services stop postgresql
+# Linux: sudo service postgresql stop
+
+# 2. Update backend/.env
+DB_PORT=54320
+DATABASE_URL=postgresql://smartbudget:dev_password_123@localhost:54320/smart_budget
+
+# 3. Start Docker
+docker-compose up -d postgres
+
+# 4. Restart backend
+npm run dev:backend
+```
+
+**To switch from Docker → Local:**
+```bash
+# 1. Stop Docker (optional)
+docker-compose down
+
+# 2. Update backend/.env
+DB_PORT=5432
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/smart_budget
+
+# 3. Ensure local PostgreSQL is running
+pg_isready -h localhost -p 5432
+
+# 4. Restart backend
+npm run dev:backend
+```
 
 ---
 
@@ -267,11 +409,10 @@ smart-budget-app/
 │   │   │   └── analytics/    # Analytics endpoints
 │   │   ├── middleware/       # Express middleware
 │   │   │   └── auth.ts       # JWT authentication
+│   │   ├── config/           # Configuration files
 │   │   ├── utils/            # Utility functions
 │   │   └── index.ts          # Server entry point
-│   ├── prisma/
-│   │   ├── schema.prisma     # Database schema
-│   │   └── migrations/       # Database migrations
+│   ├── migrations/           # Database migrations (node-pg-migrate)
 │   ├── .env                  # Environment variables (create this)
 │   └── package.json
 │
@@ -303,12 +444,12 @@ npm run format:check     # Check code formatting
 ### Backend Commands (run from `backend/` directory)
 
 ```bash
-npm run dev              # Start backend with nodemon
+npm run dev              # Start backend with tsx watch
 npm run build            # Compile TypeScript
 npm start                # Run compiled JavaScript
-npx prisma studio        # Open Prisma Studio (database GUI)
-npx prisma migrate dev   # Create new migration
-npx prisma generate      # Regenerate Prisma Client
+npm run migrate:up       # Run database migrations
+npm run migrate:down     # Rollback last migration
+npm run migrate:create   # Create new migration
 ```
 
 ### Frontend Commands (run from `frontend/` directory)
@@ -322,25 +463,9 @@ npm run lint             # Run ESLint
 
 ---
 
-## 🔧 Troubleshooting
+## 🔧 General Troubleshooting
 
-### Database Connection Issues
-
-**Error:** `Can't reach database server`
-
-**Solution:**
-```bash
-# Check if PostgreSQL is running
-docker ps                              # For Docker
-pg_isready -h localhost -p 5432       # For local PostgreSQL
-
-# Restart PostgreSQL
-docker restart smart-budget-db        # For Docker
-sudo service postgresql restart       # For Linux
-brew services restart postgresql@14   # For macOS with Homebrew
-```
-
-### Port Already in Use
+### Port Already in Use (Frontend/Backend)
 
 **Error:** `Port 3000 (or 5000) is already in use`
 
@@ -365,13 +490,13 @@ cd frontend && npm install && cd ..
 cd backend && npm install && cd ..
 ```
 
-### Prisma Schema Changes Not Reflected
+### Database Schema Changes Not Reflected
 
 **Solution:**
 ```bash
 cd backend
-npx prisma generate              # Regenerate Prisma Client
-npx prisma migrate deploy        # Apply migrations
+npm run migrate:up               # Apply migrations
+# Or check migration status in backend/migrations/ folder
 ```
 
 ---

@@ -9,8 +9,9 @@ services:
       POSTGRES_USER: smartbudget
       POSTGRES_PASSWORD: dev_password_123
       POSTGRES_DB: smart_budget
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - "54320:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -18,6 +19,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c listen_addresses='*'
+      -c max_connections=100
 
 volumes:
   postgres_data:
