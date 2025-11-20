@@ -46,7 +46,7 @@ export default function Navigation() {
               )}
 
               <Link to={isAuthenticated ? "/dashboard" : "/"} className="flex items-center">
-                <span className="text-xl font-bold text-indigo-600">SmartBudget</span>
+                <span className="text-xl font-bold text-indigo-600">SmartBudget3</span>
               </Link>
             </div>
 
