@@ -1,0 +1,40 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - deploy-branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hostinger via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /var/www/smart-budget
+            git pull origin deploy-branch
+            
+            # Install backend dependencies and build
+            cd backend
+            npm ci --production
+            npm run build
+            
+            # Install frontend dependencies and build
+            cd ../frontend
+            npm ci
+            npm run build
+            
+            # Restart the application (adjust based on your setup)
+            pm2 restart smart-budget-app || pm2 start ecosystem.config.js
+            
+            echo "Deployment completed successfully!"
