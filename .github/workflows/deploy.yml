@@ -29,7 +29,7 @@ jobs:
           npm ci
           npm run build
 
-          # Restart the backend API (running under root)
+          # Restartathe backend API (running under root)
           cd /var/www/smart-budget
           sudo pm2 restart smart-budget-api || sudo pm2 start backend/dist/index.js --name smart-budget-api
 
