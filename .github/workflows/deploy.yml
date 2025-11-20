@@ -7,45 +7,29 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug Network Connection
+      - name: Deploy Application
         run: |
-          echo "Testing connection to ${{ secrets.SSH_HOST }}:22"
-          timeout 15 bash -c "cat < /dev/null > /dev/tcp/${{ secrets.SSH_HOST }}/22" && echo "✓ Port 22 is reachable" || echo "✗ Port 22 NOT reachable"
+          set -e
+          cd /var/www/smart-budget
+          git pull origin deploy-branch
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: 'placeholder'
+          # Install backend dependencies and build
+          cd backend
+          npm ci --production
+          npm run build
 
-      - name: Add Known Hosts
-        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          # Install frontend dependencies and build
+          cd ../frontend
+          npm ci
+          npm run build
 
-      - name: Deploy via SSH
-        run: |
-          ssh -o ConnectTimeout=30 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
-            set -e
-            cd /var/www/smart-budget
-            git pull origin deploy-branch
+          # Restart the application
+          pm2 restart smart-budget-app || pm2 start ecosystem.config.js
 
-            # Install backend dependencies and build
-            cd backend
-            npm ci --production
-            npm run build
-
-            # Install frontend dependencies and build
-            cd ../frontend
-            npm ci
-            npm run build
-
-            # Restart the application
-            pm2 restart smart-budget-app || pm2 start ecosystem.config.js
-
-            echo "Deployment completed successfully!"
-          ENDSSH
+          echo "Deployment completed successfully!"
