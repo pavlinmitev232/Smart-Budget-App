@@ -91,7 +91,7 @@ export const validateGetTransactionsQuery = (
 
   // Validate category (optional)
   if (category !== undefined && category !== '') {
-    const allCategories = [...CATEGORIES.income, ...CATEGORIES.expense];
+    const allCategories = [...CATEGORIES.income, ...CATEGORIES.expense] as readonly string[];
     if (!allCategories.includes(category as string)) {
       errors.push({
         field: 'category',

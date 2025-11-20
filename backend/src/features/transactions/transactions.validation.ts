@@ -99,7 +99,7 @@ export const validateCreateTransaction = (
       });
     } else if (type === 'income' || type === 'expense') {
       // Check if category matches transaction type
-      const categoriesForType = type === 'income' ? CATEGORIES.income : CATEGORIES.expense;
+      const categoriesForType = (type === 'income' ? CATEGORIES.income : CATEGORIES.expense) as readonly string[];
       if (!categoriesForType.includes(category)) {
         errors.push({
           field: 'category',
