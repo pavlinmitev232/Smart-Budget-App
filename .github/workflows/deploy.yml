@@ -13,10 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test SSH Connection
+      - name: Debug SSH Connection
         run: |
           echo "Testing connection to ${{ secrets.SSH_HOST }}"
-          timeout 10 bash -c "</dev/tcp/${{ secrets.SSH_HOST }}/22" && echo "Port 22 is open" || echo "Port 22 not reachable"
+          echo "Attempting to connect to port 22..."
+          nc -zv -w 10 ${{ secrets.SSH_HOST }} 22 2>&1 || echo "Direct connection failed"
+          echo "Checking from GitHub's network..."
+          curl -v telnet://${{ secrets.SSH_HOST }}:22 --max-time 10 2>&1 | head -20 || echo "Curl test failed"
 
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -25,8 +28,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          timeout: 60s
+          timeout: 120s
           command_timeout: 15m
+          debug: true
           script: |
             cd /var/www/smart-budget
             git pull origin deploy-branch
