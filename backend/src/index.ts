@@ -28,9 +28,25 @@ const app = express();
 app.use(morgan(config.nodeEnv === 'development' ? 'dev' : 'combined'));
 
 // 2. CORS - Enable cross-origin requests from frontend
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Frontend origin
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin is allowed
+      if (allowedOrigins.includes(origin) || config.nodeEnv === 'development') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true, // Allow cookies/auth headers
   })
 );

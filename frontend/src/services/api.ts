@@ -4,9 +4,12 @@ import { showError } from '../utils/toast';
 /**
  * Axios instance configured for Smart Budget API
  * Base URL points to backend server
+ * 
+ * In production, this will use the same domain with /api path
+ * In development, this points to localhost:5000
  */
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
