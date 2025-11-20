@@ -29,7 +29,8 @@ jobs:
           npm ci
           npm run build
 
-          # Restart the application
-          pm2 restart smart-budget-app || pm2 start ecosystem.config.js
+          # Restart the backend API (running under root)
+          cd /var/www/smart-budget
+          sudo pm2 restart smart-budget-api || sudo pm2 start backend/dist/index.js --name smart-budget-api
 
           echo "Deployment completed successfully!"
