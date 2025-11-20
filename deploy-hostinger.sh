@@ -40,7 +40,16 @@ echo ""
 # 1. System packages
 echo "📦 Installing system packages..."
 apt update
-apt install -y nodejs postgresql postgresql-contrib nginx git
+apt install -y postgresql postgresql-contrib nginx git curl
+
+# Install Node.js 22.x (Latest LTS)
+echo "📦 Installing Node.js 22.x..."
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt install -y nodejs
+
+# Verify Node version
+node --version
+npm --version
 
 # Install PM2
 npm install -g pm2

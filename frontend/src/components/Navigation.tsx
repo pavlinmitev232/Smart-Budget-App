@@ -65,7 +65,6 @@ export default function Navigation() {
                             : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
                         }`
                       }
-                      aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
                     >
                       <svg
                         className="mr-2 h-5 w-5"
@@ -91,7 +90,6 @@ export default function Navigation() {
                             : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
                         }`
                       }
-                      aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
                     >
                       <svg
                         className="mr-2 h-5 w-5"

@@ -36,7 +36,7 @@ export default function ErrorFallback({ error, resetErrorBoundary }: ErrorFallba
         </p>
 
         {/* Error Details (only in development) */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <div className="mt-4 p-4 bg-gray-100 rounded-md text-left">
             <p className="text-sm font-semibold text-gray-900 mb-2">
               Error details (development only):

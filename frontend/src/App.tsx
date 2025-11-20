@@ -149,7 +149,7 @@ function AppRoutes() {
 }
 
 function App() {
-  const handleError = (error: Error, info: { componentStack: string }) => {
+  const handleError = (error: Error, info: { componentStack?: string | null }) => {
     // Log error to console in development
     console.error('Error caught by boundary:', error);
     console.error('Component stack:', info.componentStack);

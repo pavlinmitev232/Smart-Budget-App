@@ -195,18 +195,18 @@ export default function ExpensePieChart({
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
           <Pie
-            data={categoryData}
+            data={categoryData as any}
             dataKey="amount"
             nameKey="category"
             cx="50%"
             cy="50%"
             outerRadius={120}
-            label={({ percentage }) => `${percentage.toFixed(0)}%`}
+            label={(props: any) => `${props.percentage?.toFixed(0) || 0}%`}
             labelLine={false}
             animationDuration={800}
             animationBegin={0}
           >
-            {categoryData.map((entry, index) => (
+            {categoryData.map((_entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}

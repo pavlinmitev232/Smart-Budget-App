@@ -38,7 +38,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Log error details in development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.error('API Error:', error);
       console.error('Error Response:', error.response);
       console.error('Error Request:', error.request);

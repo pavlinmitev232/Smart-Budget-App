@@ -121,7 +121,6 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
                 }`
               }
               onClick={handleNavClick}
-              aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
             >
               <svg
                 className="mr-3 h-6 w-6"
@@ -150,7 +149,6 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
                 }`
               }
               onClick={handleNavClick}
-              aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
             >
               <svg
                 className="mr-3 h-6 w-6"

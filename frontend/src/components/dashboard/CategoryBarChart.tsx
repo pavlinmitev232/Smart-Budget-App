@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
 import api from '../../services/api';
 import { Spinner } from '../Spinner';
@@ -210,12 +209,12 @@ export default function CategoryBarChart({
               position: 'right',
               fill: '#4b5563',
               fontSize: 11,
-              formatter: (value: number) =>
+              formatter: (value: any) =>
                 new Intl.NumberFormat('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 0,
-                }).format(value),
+                }).format(Number(value)),
             }}
           />
         </BarChart>
