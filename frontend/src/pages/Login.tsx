@@ -6,6 +6,7 @@ import api from '../services/api';
 import { showSuccess, showError } from '../utils/toast';
 import type { LoginFormData } from '../types/auth';
 import { Spinner } from '../components/Spinner';
+import { AnimatedBackground } from '../components/AnimatedBackground';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -60,8 +61,10 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <>
+      <AnimatedBackground />
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8">
         {/* Header */}
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -218,7 +221,8 @@ export default function Login() {
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
