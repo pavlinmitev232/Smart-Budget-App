@@ -21,6 +21,17 @@ jobs:
           echo "Checking from GitHub's network..."
           curl -v telnet://${{ secrets.SSH_HOST }}:22 --max-time 10 2>&1 | head -20 || echo "Curl test failed"
 
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Test Direct SSH Connection
+        run: |
+          ssh -vvv -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo 'SSH Connection Successful'; exit"
+
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -28,7 +39,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          timeout: 120s
+          timeout: 60s
           command_timeout: 15m
           debug: true
           script: |
