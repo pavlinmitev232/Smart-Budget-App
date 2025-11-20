@@ -16,8 +16,7 @@ jobs:
       - name: Test SSH Connection
         run: |
           echo "Testing connection to ${{ secrets.SSH_HOST }}"
-          nc -zv ${{ secrets.SSH_HOST }} 22 || echo "Port 22 not reachable"
-          ping -c 3 ${{ secrets.SSH_HOST }} || echo "Host not pingable"
+          timeout 10 bash -c "</dev/tcp/${{ secrets.SSH_HOST }}/22" && echo "Port 22 is open" || echo "Port 22 not reachable"
 
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.0
