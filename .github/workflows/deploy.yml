@@ -13,6 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Test SSH Connection
+        run: |
+          echo "Testing connection to ${{ secrets.SSH_HOST }}"
+          nc -zv ${{ secrets.SSH_HOST }} 22 || echo "Port 22 not reachable"
+          ping -c 3 ${{ secrets.SSH_HOST }} || echo "Host not pingable"
+
       - name: Deploy to Hostinger via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -20,6 +26,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          timeout: 60s
+          command_timeout: 15m
           script: |
             cd /var/www/smart-budget
             git pull origin deploy-branch
