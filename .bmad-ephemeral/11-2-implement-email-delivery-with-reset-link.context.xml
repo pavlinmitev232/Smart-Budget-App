@@ -1,0 +1,237 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>11</epicId>
+    <storyId>11.2</storyId>
+    <title>Implement Email Delivery with Reset Link</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/11-2-implement-email-delivery-with-reset-link.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>system</asA>
+    <iWant>send password reset emails with secure links</iWant>
+    <soThat>users can complete the password reset flow</soThat>
+    <tasks>
+      - Install and configure Nodemailer package
+      - Create EmailService class for sending emails
+      - Add environment variables for SMTP configuration
+      - Design professional HTML email template
+      - Implement password reset email sending logic
+      - Add error handling for email delivery failures
+      - Integrate email service into forgot-password endpoint
+      - Test email delivery in development
+      - Write unit tests for email service
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    ### AC1: Nodemailer Configured with Gmail SMTP
+    - Nodemailer package installed and configured
+    - SMTP transport configured with Gmail settings
+    - Email service integrated into forgot-password flow
+
+    ### AC2: Environment Variables for Email Service
+    - SMTP_EMAIL environment variable for sender email
+    - SMTP_PASSWORD environment variable for app-specific password
+    - FRONTEND_URL environment variable for reset link base URL
+    - Variables documented in .env.example
+
+    ### AC3: Professional Email Template with Reset Link
+    - Subject: "Password Reset Request"
+    - Clear explanation of why user received email
+    - Prominent reset button with clickable link
+    - Plain text link as fallback
+    - 1-hour expiration warning
+    - Security note: "If you didn't request this, ignore it"
+    - Branded sender: "Smart Budget App"
+
+    ### AC4: Reset Link Format
+    - Format: {FRONTEND_URL}/reset-password?token={JWT}
+    - Example: http://localhost:3000/reset-password?token=eyJhbGci...
+    - Token included as URL query parameter
+
+    ### AC5: Email Delivery Error Handling
+    - Email failures logged to console/logs
+    - Errors don't expose to user (maintain security)
+    - Still return success response to prevent email enumeration
+    - Consider retry logic for transient failures
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics-phase2.md</path>
+        <title>Epic 11: Password Recovery & Account Security</title>
+        <section>Epic 11 - Technical Notes</section>
+        <snippet>Send emails via Nodemailer with Gmail SMTP. Use app-specific password for Gmail. Reset links format: /reset-password?token=JWT. Email is part of password reset flow after token generation.</snippet>
+      </doc>
+
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Smart Budget App Architecture</title>
+        <section>Environment Configuration</section>
+        <snippet>Environment variables managed via dotenv package. Configuration centralized in config/env.ts. All secrets stored in .env file (not committed to repo).</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>backend/src/routes/auth.ts</path>
+        <kind>route</kind>
+        <symbol>router.post('/forgot-password')</symbol>
+        <lines>unknown</lines>
+        <reason>Forgot password endpoint where email service will be integrated. After token generation, should trigger email sending.</reason>
+      </artifact>
+
+      <artifact>
+        <path>backend/src/config/env.ts</path>
+        <kind>config</kind>
+        <symbol>config</symbol>
+        <lines>unknown</lines>
+        <reason>Centralized configuration pattern. Add SMTP config here following existing pattern for database and JWT configs.</reason>
+      </artifact>
+
+      <artifact>
+        <path>backend/src/utils/response.ts</path>
+        <kind>utility</kind>
+        <symbol>sendSuccess, sendError</symbol>
+        <lines>unknown</lines>
+        <reason>Standard response utilities. Use for consistent error handling in email service.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <node>
+        <package name="nodemailer" version="latest" newDependency="true" />
+        <package name="@types/nodemailer" version="latest" devDependency="true" newDependency="true" />
+        <package name="dotenv" version="^17.2.3" />
+        <package name="express" version="^5.1.0" />
+      </node>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - Use Gmail SMTP with app-specific password (not regular password)
+    - Store all email credentials in environment variables
+    - Never expose email delivery errors to end users (security)
+    - Always return success response even if email fails (prevent enumeration)
+    - Log email failures for debugging but don't crash application
+    - HTML email template must use inline CSS (better email client compatibility)
+    - Include both HTML and plain text versions of email
+    - Reset link must use FRONTEND_URL environment variable
+    - Email must clearly state 1-hour expiration time
+    - Future production: Consider SendGrid, AWS SES, or other providers
+    - Development testing: Consider Mailtrap or similar
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>EmailService.sendPasswordReset</name>
+      <kind>Class method</kind>
+      <signature>
+        async sendPasswordReset(to: string, resetToken: string): Promise&lt;void&gt;
+
+        Parameters:
+        - to: User's email address
+        - resetToken: JWT token for password reset
+
+        Throws:
+        - Error if email configuration is missing
+        - Error if email send fails (caught and logged, not propagated)
+      </signature>
+      <path>backend/src/services/email.service.ts (new file)</path>
+    </interface>
+
+    <interface>
+      <name>SMTP Environment Variables</name>
+      <kind>Configuration</kind>
+      <signature>
+        SMTP_EMAIL=your-app@gmail.com
+        SMTP_PASSWORD=your-app-specific-password
+        FRONTEND_URL=http://localhost:3000
+      </signature>
+      <path>.env</path>
+    </interface>
+
+    <interface>
+      <name>Email Template Structure</name>
+      <kind>HTML template</kind>
+      <signature>
+        Subject: Password Reset Request
+
+        HTML Body:
+        - Header: "Smart Budget App"
+        - Greeting: "Hello,"
+        - Explanation paragraph
+        - Reset button (CTA)
+        - Plain text link fallback
+        - Expiration notice: "This link expires in 1 hour"
+        - Security notice: "If you didn't request this, ignore it"
+        - Footer
+
+        Plain Text Body:
+        - Same content as HTML but text-only format
+      </signature>
+      <path>backend/src/services/email.service.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Project uses integration-style tests with real dependencies. For email testing:
+      - Mock nodemailer transport for unit tests
+      - Verify email content, recipients, subject
+      - Test error handling when SMTP fails
+      - Integration tests may use Mailtrap or similar test email service
+      - Test files co-located with implementation
+    </standards>
+
+    <locations>
+      backend/src/**/*.test.ts
+      backend/src/services/email.service.test.ts (new file)
+    </locations>
+
+    <ideas>
+      <!-- AC1: Nodemailer Configuration Tests -->
+      - Test EmailService initializes with correct SMTP config
+      - Test transport creation with Gmail SMTP settings
+      - Test service throws error if environment variables missing
+
+      <!-- AC2: Environment Variables Tests -->
+      - Test reads SMTP_EMAIL from environment
+      - Test reads SMTP_PASSWORD from environment
+      - Test reads FRONTEND_URL from environment
+      - Test handles missing environment variables gracefully
+
+      <!-- AC3: Email Template Tests -->
+      - Test email subject is "Password Reset Request"
+      - Test email includes reset link button
+      - Test email includes plain text link
+      - Test email mentions 1-hour expiration
+      - Test email includes security notice
+      - Test email sender is "Smart Budget App"
+      - Test HTML version contains proper structure
+      - Test plain text version is included
+
+      <!-- AC4: Reset Link Format Tests -->
+      - Test reset link uses FRONTEND_URL base
+      - Test reset link includes token query parameter
+      - Test link format: {FRONTEND_URL}/reset-password?token={JWT}
+      - Test token is properly URL-encoded if needed
+
+      <!-- AC5: Error Handling Tests -->
+      - Test email delivery errors are caught and logged
+      - Test errors don't propagate to user
+      - Test success response returned even on email failure
+      - Test retry logic for transient failures (if implemented)
+
+      <!-- Integration Tests -->
+      - Test complete flow: generate token → send email → verify email sent
+      - Test email content matches expected template
+      - Test email delivered to correct recipient
+      - Test integration with forgot-password endpoint
+    </ideas>
+  </tests>
+</story-context>

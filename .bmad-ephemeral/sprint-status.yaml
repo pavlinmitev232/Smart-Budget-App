@@ -84,3 +84,64 @@ development_status:
   5-5-implement-comprehensive-error-handling-and-error-boundaries: done
   5-6-add-empty-states-and-onboarding-guidance: done
   epic-5-retrospective: optional
+
+  # ============================================
+  # PHASE 2: Advanced Features & AI Integration
+  # ============================================
+
+  # Epic 10: Subscription Tier System
+  epic-10: done
+  10-1-add-subscription-schema-and-tier-definitions: done
+  10-2-build-request-quota-tracking-system: done
+  10-3-implement-feature-gating-middleware: done
+  10-4-create-subscription-management-ui: done
+  epic-10-retrospective: optional
+
+  # Epic 11: Password Recovery & Account Security
+  epic-11: backlog
+  11-1-build-forgot-password-api-with-token-generation: review
+  11-2-implement-email-delivery-with-reset-link: ready-for-dev
+  11-3-create-reset-password-form-and-validation: ready-for-dev
+  epic-11-retrospective: optional
+
+  # Epic 6: Public Landing Page & Lead Generation
+  epic-6: backlog
+  6-1-build-landing-page-structure-and-layout: drafted
+  6-2-implement-scroll-triggered-animations: drafted
+  6-3-build-contact-form-with-email-delivery: drafted
+  6-4-add-seo-optimization-and-performance-improvements: drafted
+  epic-6-retrospective: optional
+
+  # Epic 7: AI Financial Advisor (GPT-5.1 Primary)
+  epic-7: backlog
+  7-1-set-up-gpt-5-1-integration-with-openai-sdk: drafted
+  7-2-build-transaction-analysis-endpoint-with-gpt-5-1: drafted
+  7-3-create-ai-insights-button-and-modal-ui: drafted
+  7-4-implement-ai-chat-interface: drafted
+  7-5-add-request-tracking-and-tier-based-routing: drafted
+  epic-7-retrospective: optional
+
+  # Epic 8: Income Profile & AI Budget Recommendations
+  epic-8: backlog
+  8-1-create-user-income-profile-schema-and-api: drafted
+  8-2-build-income-profile-form-in-settings: drafted
+  8-3-integrate-income-context-into-ai-analysis: drafted
+  8-4-build-overspending-alert-system: drafted
+  epic-8-retrospective: optional
+
+  # Epic 9: Financial Goal Tracking
+  epic-9: backlog
+  9-1-create-goals-schema-and-crud-api: drafted
+  9-2-build-goal-creation-and-management-ui: drafted
+  9-3-implement-progress-calculation-and-manual-allocation: drafted
+  9-4-build-goals-dashboard-with-visualizations: drafted
+  9-5-dynamic-timeline-recalculation: drafted
+  epic-9-retrospective: optional
+
+  # Epic 12: AI Bill Comparison Tool
+  epic-12: backlog
+  12-1-implement-image-upload-and-storage: drafted
+  12-2-build-bill-comparison-with-gpt-5-1-vision: drafted
+  12-3-parse-results-and-calculate-differences: drafted
+  12-4-build-comparison-results-ui: drafted
+  epic-12-retrospective: optional
