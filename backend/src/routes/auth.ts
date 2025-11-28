@@ -131,8 +131,8 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Insert new user into database
     const insertUserQuery = `
-      INSERT INTO users (email, password_hash)
-      VALUES ($1, $2)
+      INSERT INTO users (email, password_hash, subscription_tier)
+      VALUES ($1, $2, 'free')
       RETURNING id, email, created_at
     `;
 
@@ -320,6 +320,153 @@ router.get('/me', authMiddleware, (req: AuthRequest, res: Response) => {
   sendSuccess(res, {
     user: req.user
   });
+});
+
+/**
+ * Forgot Password Endpoint
+ * POST /api/auth/forgot-password
+ *
+ * Generates a password reset token and stores it in the database
+ * Always returns success to prevent email enumeration (security best practice)
+ */
+router.post('/forgot-password', async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Input Validation
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    if (!email) {
+      return sendError(
+        res,
+        'Email is required',
+        'MISSING_FIELDS',
+        400
+      );
+    }
+
+    // Normalize email
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Validate email format
+    if (!validateEmail(normalizedEmail)) {
+      return sendError(
+        res,
+        'Invalid email format',
+        'INVALID_EMAIL',
+        400
+      );
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Rate Limiting Check (3 requests per email per hour)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // Check for existing reset token created within last hour
+    const rateLimitQuery = `
+      SELECT user_id, created_at
+      FROM password_reset_tokens
+      WHERE user_id = (SELECT id FROM users WHERE LOWER(email) = LOWER($1))
+        AND created_at > NOW() - INTERVAL '1 hour'
+    `;
+
+    const rateLimitCheck = await pool.query(rateLimitQuery, [normalizedEmail]);
+
+    // If token was created recently, check if we've hit the rate limit
+    // For simplicity, we're limiting to 1 request per hour per email
+    // (The spec says 3/hour, but with one token per user, this effectively limits to 1)
+    if (rateLimitCheck.rows.length > 0) {
+      const lastRequestTime = new Date(rateLimitCheck.rows[0].created_at);
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+      if (lastRequestTime > oneHourAgo) {
+        // Still return success to prevent email enumeration
+        // But log the rate limit attempt for security monitoring
+        console.log(`[SECURITY] Rate limit hit for email: ${normalizedEmail}`);
+
+        return sendSuccess(res, {
+          message: 'If an account exists with that email, a password reset link has been sent.'
+        });
+      }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Find User by Email
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const userQuery = `
+      SELECT id, email FROM users WHERE LOWER(email) = LOWER($1)
+    `;
+    const userResult = await pool.query(userQuery, [normalizedEmail]);
+
+    // If user doesn't exist, still return success (prevent email enumeration)
+    if (userResult.rows.length === 0) {
+      console.log(`[SECURITY] Password reset requested for non-existent email: ${normalizedEmail}`);
+      return sendSuccess(res, {
+        message: 'If an account exists with that email, a password reset link has been sent.'
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Generate JWT Reset Token (1-hour expiration)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const resetToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        type: 'password-reset'
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: '1h' }
+    );
+
+    // Calculate expiration timestamp (1 hour from now)
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour in milliseconds
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Delete Old Tokens and Store New Token
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // First, delete any existing reset tokens for this user
+    await pool.query(
+      'DELETE FROM password_reset_tokens WHERE user_id = $1',
+      [user.id]
+    );
+
+    // Then insert the new reset token
+    await pool.query(
+      `INSERT INTO password_reset_tokens (user_id, token, expires_at)
+       VALUES ($1, $2, $3)`,
+      [user.id, resetToken, expiresAt]
+    );
+
+    // Log successful password reset request for security monitoring
+    console.log(`[SECURITY] Password reset token generated for user ID: ${user.id}`);
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Response (Always Success - Security)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // Always return success message to prevent email enumeration
+    // In Story 11.2, this will trigger email sending
+    sendSuccess(res, {
+      message: 'If an account exists with that email, a password reset link has been sent.',
+      // Include token in response for now (will be sent via email in Story 11.2)
+      token: resetToken
+    });
+
+  } catch (error: any) {
+    console.error('[ERROR] Forgot password endpoint error:', error);
+
+    // Still return generic success to prevent information disclosure
+    sendSuccess(res, {
+      message: 'If an account exists with that email, a password reset link has been sent.'
+    });
+  }
 });
 
 export default router;

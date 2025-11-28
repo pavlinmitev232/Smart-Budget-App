@@ -166,6 +166,34 @@ export default function MobileNavDrawer({ isOpen, onClose }: MobileNavDrawerProp
               </svg>
               Transactions
             </NavLink>
+
+            <NavLink
+              to="/subscription"
+              className={({ isActive }) =>
+                `flex items-center px-3 py-3 text-base font-medium rounded-md transition-colors ${
+                  isActive
+                    ? 'bg-indigo-100 text-indigo-700 font-semibold'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                }`
+              }
+              onClick={handleNavClick}
+            >
+              <svg
+                className="mr-3 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              Subscription
+            </NavLink>
           </nav>
 
           {/* Logout Button */}

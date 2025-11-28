@@ -166,7 +166,19 @@
       "Bash(npm install react-toastify)",
       "Bash(npm install react-loading-skeleton)",
       "Bash(npm install react-error-boundary)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(npm run migrate:create:*)",
+      "Bash(docker exec:*)",
+      "Bash(npm run migrate:up:*)",
+      "Bash(test:*)",
+      "Bash(node test-quota.js:*)",
+      "Bash(node test-middleware.js:*)",
+      "Bash(curl:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc2MzIwMjg2OSwiZXhwIjoxNzYzMjg5MjY5fQ.HMjLYaROicusGKsF5gyRyKVf1ZYWSRvcauKa9M9dcOQ\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImVtYWlsIjoiZnVsbHRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjQxMTM5NTYsImV4cCI6MTc2NDIwMDM1Nn0.sp4H1BcOhNDzW0CPv4VmRd4WAF3k0Oezl3hVGjapllg\")",
+      "Bash(timeout /t 3)"
     ],
     "deny": [],
     "ask": []
