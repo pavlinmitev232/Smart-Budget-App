@@ -20,7 +20,7 @@ exports.up = (pgm) => {
     subscription_tier: {
       type: 'varchar(20)',
       notNull: true,
-      default: "'free'",
+      default: 'free',
     },
   });
 
