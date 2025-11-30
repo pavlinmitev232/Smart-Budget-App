@@ -5,6 +5,8 @@ import { config, logConfigInfo } from './config/env';
 import './config/database'; // Initialize database connection (port 54321)
 import healthRouter from './routes/health';
 import authRouter from './routes/auth';
+import contactRouter from './routes/contact';
+import aiRouter from './routes/ai';
 import categoriesRouter from './features/categories/categories.routes';
 import transactionsRouter from './features/transactions/transactions.routes';
 import analyticsRouter from './features/analytics/analytics.routes';
@@ -62,6 +64,8 @@ app.use(express.json());
 // Health check and API routes
 app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/contact', contactRouter);
+app.use('/api/ai', aiRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/transactions', transactionsRouter);
 app.use('/api/analytics', analyticsRouter);
@@ -76,6 +80,7 @@ app.get('/', (req: Request, res: Response) => {
     endpoints: {
       health: '/api/health',
       register: '/api/auth/register',
+      contact: '/api/contact',
       categories: '/api/categories',
       transactions: '/api/transactions',
       analytics: '/api/analytics',

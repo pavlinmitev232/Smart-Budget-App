@@ -98,27 +98,27 @@ development_status:
   epic-10-retrospective: optional
 
   # Epic 11: Password Recovery & Account Security
-  epic-11: backlog
-  11-1-build-forgot-password-api-with-token-generation: review
-  11-2-implement-email-delivery-with-reset-link: ready-for-dev
-  11-3-create-reset-password-form-and-validation: ready-for-dev
+  epic-11: done
+  11-1-build-forgot-password-api-with-token-generation: done
+  11-2-implement-email-delivery-with-reset-link: done
+  11-3-create-reset-password-form-and-validation: done
   epic-11-retrospective: optional
 
   # Epic 6: Public Landing Page & Lead Generation
-  epic-6: backlog
-  6-1-build-landing-page-structure-and-layout: drafted
-  6-2-implement-scroll-triggered-animations: drafted
-  6-3-build-contact-form-with-email-delivery: drafted
-  6-4-add-seo-optimization-and-performance-improvements: drafted
+  epic-6: done
+  6-1-build-landing-page-structure-and-layout: done
+  6-2-implement-scroll-triggered-animations: done
+  6-3-build-contact-form-with-email-delivery: done
+  6-4-add-seo-optimization-and-performance-improvements: done
   epic-6-retrospective: optional
 
   # Epic 7: AI Financial Advisor (GPT-5.1 Primary)
-  epic-7: backlog
-  7-1-set-up-gpt-5-1-integration-with-openai-sdk: drafted
-  7-2-build-transaction-analysis-endpoint-with-gpt-5-1: drafted
-  7-3-create-ai-insights-button-and-modal-ui: drafted
-  7-4-implement-ai-chat-interface: drafted
-  7-5-add-request-tracking-and-tier-based-routing: drafted
+  epic-7: review
+  7-1-set-up-gpt-5-1-integration-with-openai-sdk: review
+  7-2-build-transaction-analysis-endpoint-with-gpt-5-1: review
+  7-3-create-ai-insights-button-and-modal-ui: review
+  7-4-implement-ai-chat-interface: review
+  7-5-add-request-tracking-and-tier-based-routing: review
   epic-7-retrospective: optional
 
   # Epic 8: Income Profile & AI Budget Recommendations

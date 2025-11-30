@@ -2,8 +2,9 @@
 
 **Epic:** Epic 6 - Public Landing Page & Lead Generation
 **Story ID:** 6.4
-**Status:** drafted
+**Status:** done
 **Created:** 2025-11-25
+**Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 6
 
 ---
@@ -83,12 +84,12 @@
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] SEO meta tags implemented
-- [ ] Structured data added
-- [ ] Performance targets met
-- [ ] Accessibility standards met
-- [ ] Lighthouse score > 90
-- [ ] Sitemap and robots.txt created
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] All acceptance criteria pass
+- [x] SEO meta tags implemented
+- [x] Structured data added
+- [x] Performance targets met
+- [x] Accessibility standards met
+- [x] Lighthouse score > 90
+- [x] Sitemap and robots.txt created
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

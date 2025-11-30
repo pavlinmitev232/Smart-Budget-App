@@ -2,8 +2,9 @@
 
 **Epic:** Epic 6 - Public Landing Page & Lead Generation
 **Story ID:** 6.3
-**Status:** drafted
+**Status:** done
 **Created:** 2025-11-25
+**Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 6
 
 ---
@@ -103,14 +104,14 @@ CREATE TABLE contact_submissions (
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] Contact form component created
-- [ ] API endpoint for submissions
-- [ ] Database table created
-- [ ] Email delivery working
-- [ ] Rate limiting implemented
-- [ ] Spam prevention measures active
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] All acceptance criteria pass
+- [x] Contact form component created
+- [x] API endpoint for submissions
+- [x] Database table created
+- [x] Email delivery working
+- [x] Rate limiting implemented
+- [x] Spam prevention measures active
+- [x] Unit tests pass
+- [x] Integration tests pass
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

@@ -2,13 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ErrorBoundary } from 'react-error-boundary';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorFallback from './components/ErrorFallback';
+import LandingPage from './pages/LandingPage';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Subscription from './pages/Subscription';
@@ -101,10 +105,9 @@ function AppRoutes() {
 
   return (
     <>
-      <Navigation />
       <Routes>
-        {/* Root - redirect based on auth */}
-        <Route path="/" element={<RootRedirect />} />
+        {/* Root - Landing Page (redirects to dashboard if logged in) */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Public Routes - redirect to dashboard if authenticated */}
         <Route
@@ -123,13 +126,32 @@ function AppRoutes() {
             </PublicRoute>
           }
         />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected Routes - require authentication */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <>
+                <Navigation />
+                <Dashboard />
+              </>
             </ProtectedRoute>
           }
         />
@@ -137,7 +159,10 @@ function AppRoutes() {
           path="/transactions"
           element={
             <ProtectedRoute>
-              <Transactions />
+              <>
+                <Navigation />
+                <Transactions />
+              </>
             </ProtectedRoute>
           }
         />
@@ -145,7 +170,10 @@ function AppRoutes() {
           path="/subscription"
           element={
             <ProtectedRoute>
-              <Subscription />
+              <>
+                <Navigation />
+                <Subscription />
+              </>
             </ProtectedRoute>
           }
         />
@@ -168,32 +196,34 @@ function App() {
   };
 
   return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onError={handleError}
-      onReset={() => {
-        // Reset app state if needed
-        window.location.href = '/';
-      }}
-    >
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </AuthProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <HelmetProvider>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onError={handleError}
+        onReset={() => {
+          // Reset app state if needed
+          window.location.href = '/';
+        }}
+      >
+        <BrowserRouter>
+          <AuthProvider>
+            <AppRoutes />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </AuthProvider>
+        </BrowserRouter>
+      </ErrorBoundary>
+    </HelmetProvider>
   );
 }
 

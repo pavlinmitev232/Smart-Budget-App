@@ -2,8 +2,9 @@
 
 **Epic:** Epic 7 - AI Financial Advisor (GPT-5.1 Primary)
 **Story ID:** 7.1
-**Status:** drafted
+**Status:** review
 **Created:** 2025-11-25
+**Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 7
 
 ---
@@ -84,13 +85,13 @@ Response: { "success": true, "data": { "gpt": true, "gemini": true, "status": "A
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] OpenAI SDK integrated
-- [ ] Gemini SDK integrated
-- [ ] AIService class created
-- [ ] Health check endpoint working
-- [ ] Connection tests passing
-- [ ] Error handling for missing keys
-- [ ] Unit tests pass
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] All acceptance criteria pass
+- [x] OpenAI SDK integrated
+- [x] Gemini SDK integrated
+- [x] AIService class created
+- [x] Health check endpoint working
+- [x] Connection tests passing
+- [x] Error handling for missing keys
+- [x] Unit tests pass
+- [x] Code reviewed
+- [ ] Story marked 'done' in sprint-status.yaml (currently in 'review' status)

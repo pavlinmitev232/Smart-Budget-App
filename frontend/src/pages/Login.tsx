@@ -189,13 +189,12 @@ export default function Login() {
             </div>
 
             <div className="text-sm">
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
-                onClick={(e) => e.preventDefault()}
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </div>
 

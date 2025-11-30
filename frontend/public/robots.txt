@@ -1,0 +1,19 @@
+# Smart Budget App - Robots.txt
+# https://developers.google.com/search/docs/crawling-indexing/robots/intro
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /transactions
+Disallow: /subscription
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://smartbudget.app/sitemap.xml
+
+# Crawl-delay for specific bots (optional)
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1

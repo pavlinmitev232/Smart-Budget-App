@@ -21,8 +21,17 @@ export interface AppConfig {
     password: string;
   };
 
-  // Authentication (for future use)
+  // Authentication
   jwtSecret?: string;
+
+  // Email Configuration (SMTP)
+  smtp: {
+    email: string;
+    password: string;
+  };
+
+  // Frontend URL for email links
+  frontendUrl: string;
 }
 
 /**
@@ -98,6 +107,11 @@ Example setup:
     throw new Error(errorMessage);
   }
 
+  // Load SMTP configuration
+  const smtpEmail = tryGetEnvVar('SMTP_EMAIL');
+  const smtpPassword = tryGetEnvVar('SMTP_PASSWORD');
+  const frontendUrl = tryGetEnvVar('FRONTEND_URL', 'http://localhost:3000');
+
   // Build final configuration object
   const config: AppConfig = {
     port,
@@ -111,6 +125,11 @@ Example setup:
       password: dbPassword,
     },
     jwtSecret: process.env.JWT_SECRET, // Optional for now
+    smtp: {
+      email: smtpEmail,
+      password: smtpPassword,
+    },
+    frontendUrl,
   };
 
   return config;
@@ -131,4 +150,6 @@ export function logConfigInfo(): void {
   console.log(`   • Server Port: ${config.port}`);
   console.log(`   • Database: ${config.database.name} @ ${config.database.host}:${config.database.port}`);
   console.log(`   • JWT Secret: ${config.jwtSecret ? '✓ Set' : '✗ Not set (will be required for auth)'}`);
+  console.log(`   • SMTP Email: ${config.smtp.email ? '✓ Set' : '✗ Not set'}`);
+  console.log(`   • Frontend URL: ${config.frontendUrl}`);
 }

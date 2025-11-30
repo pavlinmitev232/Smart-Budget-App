@@ -2,7 +2,7 @@
 
 **Epic:** Epic 10 - Subscription Tier System
 **Story ID:** 10.1
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Completed:** 2025-11-26
 **Sprint:** Phase 2, Epic 10

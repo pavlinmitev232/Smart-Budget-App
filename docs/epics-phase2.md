@@ -103,7 +103,7 @@ export const SUBSCRIPTION_TIERS = {
       maxGoals: 3,
       transactionHistoryMonths: 6,
       exportData: false,
-      aiProvider: 'gemini-3-pro'
+      aiProvider: 'gemini' // Primary: Gemini, Fallback: GPT if available
     }
   },
   basic: {
@@ -115,7 +115,7 @@ export const SUBSCRIPTION_TIERS = {
       maxGoals: 10,
       transactionHistoryMonths: 24,
       exportData: true, // CSV only
-      aiProvider: 'gpt-5.1'
+      aiProvider: 'gemini' // Primary: Gemini, Fallback: GPT if available
     }
   },
   pro: {
@@ -127,7 +127,7 @@ export const SUBSCRIPTION_TIERS = {
       maxGoals: -1, // Unlimited
       transactionHistoryMonths: -1, // Unlimited
       exportData: true, // CSV + PDF
-      aiProvider: 'gpt-5.1',
+      aiProvider: 'gemini', // Primary: Gemini, Fallback: GPT if available
       prioritySupport: true
     }
   }
@@ -465,8 +465,24 @@ Response:
 - Refresh quota status after each AI request
 - Progress bars with color coding (green < 80%, yellow 80-100%, red = limit reached)
 - Store waitlist emails in `subscription_waitlist` table (optional)
-- Future: Replace placeholder with Stripe Checkout integration
+- **Future: Replace placeholder with Stripe Checkout integration (Epic 13 - Phase 3)**
 - Show upgrade prompts when hitting quota limits (toast notification)
+
+**Payment Integration:**
+This story creates the UI for subscription management with **placeholder upgrade buttons**. Actual payment processing is implemented in **Epic 13 (Phase 3)** - see `docs/epics-phase3-payment-billing.md` for:
+- Story 13.1: Stripe Checkout integration for user self-service upgrades
+- Story 13.2: Webhook handling for automatic tier updates
+- Story 13.3: Admin subscription management tools
+- Story 13.4-13.6: Billing history, cancellation, and customer portal
+
+**Dev/Testing Tier Updates:**
+For testing tier-based features before payment integration, use the dev-only endpoint:
+```bash
+PUT /api/user/subscription/admin-override
+Authorization: Bearer <token>
+{ "tier": "basic" }
+```
+This endpoint is only available when `NODE_ENV=development` or `NODE_ENV=test`.
 
 ---
 
@@ -1360,20 +1376,21 @@ Sitemap: https://smartbudgetapp.com/sitemap.xml
 
 ---
 
-## Epic 7: AI Financial Advisor (GPT-5.1 Primary)
+## Epic 7: AI Financial Advisor (Gemini Primary, GPT Fallback)
 
-**Goal:** Integrate GPT-5.1 powered AI to provide personalized financial insights, spending analysis, and interactive chat for budget optimization.
+**Goal:** Integrate AI-powered financial insights to provide personalized spending analysis, recommendations, and interactive chat for budget optimization.
 
 **Value:** Core product differentiator that transforms raw transaction data into actionable intelligence. Provides users with expert-level financial guidance at scale.
 
-**Scope:** GPT-5.1 integration, transaction analysis endpoint, AI chat interface, prompt engineering, request logging, tier-based provider selection (GPT-5.1 primary, Gemini fallback).
+**Scope:** Gemini & GPT integration, transaction analysis endpoint, AI chat interface, prompt engineering, request logging, provider fallback selection (Gemini primary, GPT-4-turbo fallback).
 
 **Dependencies:** Epic 10 (subscription tiers for rate limiting)
 
 **Technical Notes:**
-- Primary AI: GPT-5.1 (gpt-5.1-chat-latest for adaptive reasoning)
-- Fallback AI: Gemini 3.0 Pro (for free tier and failures)
-- Use prompt caching for 90% cost savings on repeated queries
+- **As Implemented:** Gemini-first for all tiers (cost optimization)
+- Primary AI: Gemini 2.5 Flash (fast, cost-effective)
+- Fallback AI: GPT-4-turbo (if Gemini unavailable)
+- _Note: Original design specified tier-based routing (Free→Gemini, Basic/Pro→GPT). Implementation uses Gemini-first for all tiers to optimize costs while maintaining quality._
 - Store AI requests in `user_requests` table from Epic 10
 - Time range: User-selectable (30 days, 3 months, 6 months, custom)
 
@@ -1829,13 +1846,17 @@ POST /api/ai/chat
 
 ---
 
-### Story 7.5: Add Request Tracking and Tier-Based Routing
+### Story 7.5: Add Request Tracking and Provider Fallback Routing
 
-**Summary:** Integrate quota checking and log all AI requests with tier-based provider selection.
+**Summary:** Integrate quota checking and log all AI requests with provider fallback selection.
 
 **Key Features:**
 - Before analysis: Check quota (Epic 10.2)
-- Route Free tier → Gemini, Basic/Pro → GPT-5.1
+- **Provider Selection Strategy (As Implemented):**
+  - **Primary**: Gemini (all tiers) - cost-effective, fast
+  - **Fallback**: GPT-4-turbo if Gemini unavailable
+  - **Error**: Return 503 if both providers unavailable
+  - _Note: Implementation uses Gemini-first for all tiers to optimize costs while maintaining quality across all subscription levels_
 - Log all requests to `user_requests` table
 - Include token usage, provider, timestamp
 - Show quota warning at 80% (e.g., "4/5 insights used")
@@ -1850,7 +1871,7 @@ POST /api/ai/chat
 
 **Technical:**
 - Use middleware from Epic 10.3
-- Implement provider fallback chain: GPT → Gemini → Error
+- **Implemented provider fallback chain: Gemini → GPT-4-turbo → Error**
 - Monitor and alert on high error rates
 - Track cost per user for optimization
 
@@ -2090,13 +2111,13 @@ POST /api/ai/chat
 
 ---
 
-### Story 7.5: Add Request Tracking and Tier-Based Routing
+### Story 7.5: Add Request Tracking and Provider Fallback Routing
 
-**Summary:** Integrate quota checking and log all AI requests with tier-based provider selection.
+**Summary:** Integrate quota checking and log all AI requests with provider fallback selection.
 
 **Key Features:**
 - Before analysis: Check quota (Epic 10.2)
-- Route Free tier → Gemini, Basic/Pro → GPT-5.1
+- **Implemented: Gemini-first for all tiers → GPT-4-turbo fallback → Error if both unavailable**
 - Log all requests to `user_requests` table
 - Include token usage, provider, timestamp
 - Show quota warning at 80% (e.g., "4/5 insights used")

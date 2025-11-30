@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { sendSuccess, sendError } from '../utils/response';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { emailService } from '../services/email.service';
 
 const router = Router();
 
@@ -448,15 +449,22 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
     console.log(`[SECURITY] Password reset token generated for user ID: ${user.id}`);
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Send Password Reset Email
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // Send email with reset link (Story 11.2)
+    // Note: emailService handles errors internally and doesn't throw
+    // This prevents email delivery failures from exposing user existence
+    await emailService.sendPasswordReset(user.email, resetToken);
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // Response (Always Success - Security)
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     // Always return success message to prevent email enumeration
-    // In Story 11.2, this will trigger email sending
+    // Token is sent via email, not in response (security best practice)
     sendSuccess(res, {
-      message: 'If an account exists with that email, a password reset link has been sent.',
-      // Include token in response for now (will be sent via email in Story 11.2)
-      token: resetToken
+      message: 'If an account exists with that email, a password reset link has been sent.'
     });
 
   } catch (error: any) {
@@ -466,6 +474,163 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
     sendSuccess(res, {
       message: 'If an account exists with that email, a password reset link has been sent.'
     });
+  }
+});
+
+/**
+ * POST /api/auth/reset-password
+ *
+ * Resets a user's password using a valid reset token
+ * Validates token, updates password, and deletes the used token
+ */
+router.post('/reset-password', async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Input Validation
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    if (!token || !newPassword) {
+      return sendError(
+        res,
+        'Reset token and new password are required',
+        'MISSING_FIELDS',
+        400
+      );
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Validate New Password Requirements
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.valid) {
+      return sendError(
+        res,
+        passwordValidation.errors[0], // Return first error
+        'INVALID_PASSWORD',
+        400
+      );
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Verify JWT Token
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    } catch (error) {
+      return sendError(
+        res,
+        'Invalid or expired reset token',
+        'INVALID_TOKEN',
+        400
+      );
+    }
+
+    // Verify token type
+    if (decoded.type !== 'password-reset') {
+      return sendError(
+        res,
+        'Invalid reset token',
+        'INVALID_TOKEN',
+        400
+      );
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Verify Token Exists in Database and Not Expired
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const tokenQuery = `
+      SELECT user_id, expires_at
+      FROM password_reset_tokens
+      WHERE user_id = $1 AND token = $2
+    `;
+
+    const tokenResult = await pool.query(tokenQuery, [decoded.userId, token]);
+
+    if (tokenResult.rows.length === 0) {
+      return sendError(
+        res,
+        'Invalid or expired reset token',
+        'INVALID_TOKEN',
+        400
+      );
+    }
+
+    const tokenData = tokenResult.rows[0];
+
+    // Check if token has expired
+    const now = new Date();
+    const expiresAt = new Date(tokenData.expires_at);
+
+    if (now > expiresAt) {
+      // Delete expired token
+      await pool.query(
+        'DELETE FROM password_reset_tokens WHERE user_id = $1',
+        [decoded.userId]
+      );
+
+      return sendError(
+        res,
+        'Reset token has expired',
+        'TOKEN_EXPIRED',
+        400
+      );
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Hash New Password
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Update Password and Delete Reset Token (Transaction)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // Use transaction to ensure both operations succeed or fail together
+    await pool.query('BEGIN');
+
+    try {
+      // Update user's password
+      await pool.query(
+        'UPDATE users SET password_hash = $1 WHERE id = $2',
+        [hashedPassword, decoded.userId]
+      );
+
+      // Delete the used reset token
+      await pool.query(
+        'DELETE FROM password_reset_tokens WHERE user_id = $1',
+        [decoded.userId]
+      );
+
+      await pool.query('COMMIT');
+
+      // Log successful password reset for security monitoring
+      console.log(`[SECURITY] Password successfully reset for user ID: ${decoded.userId}`);
+
+      sendSuccess(res, {
+        message: 'Password reset successful. You can now log in with your new password.'
+      });
+
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      throw error;
+    }
+
+  } catch (error: any) {
+    console.error('[ERROR] Reset password endpoint error:', error);
+
+    return sendError(
+      res,
+      'Failed to reset password. Please try again.',
+      'RESET_FAILED',
+      500
+    );
   }
 });
 

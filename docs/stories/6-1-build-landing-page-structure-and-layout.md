@@ -2,8 +2,9 @@
 
 **Epic:** Epic 6 - Public Landing Page & Lead Generation
 **Story ID:** 6.1
-**Status:** drafted
+**Status:** done
 **Created:** 2025-11-25
+**Completed:** 2025-11-29
 **Sprint:** Phase 2, Epic 6
 
 ---

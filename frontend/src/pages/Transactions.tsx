@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import TransactionForm from '../components/transactions/TransactionForm';
 import TransactionListSkeleton from '../components/TransactionListSkeleton';
 import EmptyState from '../components/EmptyState';
+import AIInsightsModal from '../components/AIInsightsModal';
 import { showSuccess, showError } from '../utils/toast';
 import api from '../services/api';
 
@@ -82,6 +83,9 @@ export default function Transactions() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // AI Insights modal state
+  const [showAIInsights, setShowAIInsights] = useState(false);
 
   /**
    * Fetch categories on mount
@@ -306,15 +310,26 @@ export default function Transactions() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
-          {/* Header with Add Button */}
+          {/* Header with Buttons */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-            <button
-              onClick={handleAddTransaction}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
-            >
-              Add Transaction
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowAIInsights(true)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Get AI Insights
+              </button>
+              <button
+                onClick={handleAddTransaction}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+              >
+                Add Transaction
+              </button>
+            </div>
           </div>
 
           {/* Filter Controls */}
@@ -697,6 +712,13 @@ export default function Transactions() {
           </div>
         </div>
       )}
+
+      {/* AI Insights Modal */}
+      <AIInsightsModal
+        isOpen={showAIInsights}
+        onClose={() => setShowAIInsights(false)}
+        userTier="free"
+      />
     </div>
   );
 }
