@@ -2,8 +2,9 @@
 
 **Epic:** Epic 8 - Income Profile & AI Budget Recommendations
 **Story ID:** 8.1
-**Status:** drafted
+**Status:** done
 **Created:** 2025-11-25
+**Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 8
 
 ---
@@ -91,12 +92,12 @@ CREATE TABLE user_income_profile (
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] Migration creates table
-- [ ] CRUD endpoints functional
-- [ ] Normalization logic correct
-- [ ] Validation enforced
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] All acceptance criteria pass
+- [x] Migration creates table
+- [x] CRUD endpoints functional
+- [x] Normalization logic correct
+- [x] Validation enforced
+- [x] Manual tests pass (verified all frequencies)
+- [x] Integration tests pass
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

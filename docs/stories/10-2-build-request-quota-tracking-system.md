@@ -2,7 +2,7 @@
 
 **Epic:** Epic 10 - Subscription Tier System
 **Story ID:** 10.2
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Completed:** 2025-11-26
 **Sprint:** Phase 2, Epic 10
@@ -169,8 +169,8 @@ export class QuotaService {
 - [x] Error responses standardized
 - [x] Unit tests pass (>80% coverage)
 - [x] Integration tests pass
-- [x] Code reviewed by senior developer
-- [x] Story marked as 'done' in sprint-status.yaml
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml
 
 ---
 

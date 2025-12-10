@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AlertBanner from '../components/AlertBanner';
 import SummaryCard from '../components/dashboard/SummaryCard';
 import SummaryCardSkeleton from '../components/dashboard/SummaryCardSkeleton';
 import TimePeriodSelector from '../components/dashboard/TimePeriodSelector';
@@ -251,6 +252,9 @@ export default function Dashboard() {
           initialStartDate={customStartDate || undefined}
           initialEndDate={customEndDate || undefined}
         />
+
+        {/* Alert Banner */}
+        <AlertBanner />
 
         {/* Error State */}
         {error && (

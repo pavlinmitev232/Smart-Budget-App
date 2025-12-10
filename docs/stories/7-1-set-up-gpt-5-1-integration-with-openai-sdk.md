@@ -2,7 +2,7 @@
 
 **Epic:** Epic 7 - AI Financial Advisor (GPT-5.1 Primary)
 **Story ID:** 7.1
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 7
@@ -94,4 +94,4 @@ Response: { "success": true, "data": { "gpt": true, "gemini": true, "status": "A
 - [x] Error handling for missing keys
 - [x] Unit tests pass
 - [x] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml (currently in 'review' status)
+- [x] Story marked 'done' in sprint-status.yaml

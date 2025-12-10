@@ -21,6 +21,8 @@ services:
       retries: 5
     command: >
       postgres
+      -c shared_preload_libraries='pg_cron'
+      -c cron.database_name='smart_budget'
       -c listen_addresses='*'
       -c max_connections=100
 

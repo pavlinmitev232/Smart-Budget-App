@@ -113,29 +113,29 @@ development_status:
   epic-6-retrospective: optional
 
   # Epic 7: AI Financial Advisor (GPT-5.1 Primary)
-  epic-7: review
-  7-1-set-up-gpt-5-1-integration-with-openai-sdk: review
-  7-2-build-transaction-analysis-endpoint-with-gpt-5-1: review
-  7-3-create-ai-insights-button-and-modal-ui: review
-  7-4-implement-ai-chat-interface: review
-  7-5-add-request-tracking-and-tier-based-routing: review
+  epic-7: done
+  7-1-set-up-gpt-5-1-integration-with-openai-sdk: done
+  7-2-build-transaction-analysis-endpoint-with-gpt-5-1: done
+  7-3-create-ai-insights-button-and-modal-ui: done
+  7-4-implement-ai-chat-interface: done
+  7-5-add-request-tracking-and-tier-based-routing: done
   epic-7-retrospective: optional
 
   # Epic 8: Income Profile & AI Budget Recommendations
-  epic-8: backlog
-  8-1-create-user-income-profile-schema-and-api: drafted
-  8-2-build-income-profile-form-in-settings: drafted
-  8-3-integrate-income-context-into-ai-analysis: drafted
-  8-4-build-overspending-alert-system: drafted
+  epic-8: done
+  8-1-create-user-income-profile-schema-and-api: done
+  8-2-build-income-profile-form-in-settings: done
+  8-3-integrate-income-context-into-ai-analysis: done
+  8-4-build-overspending-alert-system: done
   epic-8-retrospective: optional
 
   # Epic 9: Financial Goal Tracking
-  epic-9: backlog
-  9-1-create-goals-schema-and-crud-api: drafted
-  9-2-build-goal-creation-and-management-ui: drafted
-  9-3-implement-progress-calculation-and-manual-allocation: drafted
-  9-4-build-goals-dashboard-with-visualizations: drafted
-  9-5-dynamic-timeline-recalculation: drafted
+  epic-9: done
+  9-1-create-goals-schema-and-crud-api: done
+  9-2-build-goal-creation-and-management-ui: done
+  9-3-implement-progress-calculation-and-manual-allocation: done
+  9-4-build-goals-dashboard-with-visualizations: done
+  9-5-dynamic-timeline-recalculation: ready-for-dev
   epic-9-retrospective: optional
 
   # Epic 12: AI Bill Comparison Tool

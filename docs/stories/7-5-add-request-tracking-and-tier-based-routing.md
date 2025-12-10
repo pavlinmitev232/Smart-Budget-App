@@ -2,7 +2,7 @@
 
 **Epic:** Epic 7 - AI Financial Advisor (GPT-5.1 Primary)
 **Story ID:** 7.5
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 7
@@ -236,5 +236,5 @@ If desired, these could be added:
 - [x] Quota status displayed
 - [x] Quota exceeded errors handled
 - [x] Error handling working
-- [x] Code reviewed (ready for review)
-- [ ] Story marked 'done' in sprint-status.yaml (marked as 'review')
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

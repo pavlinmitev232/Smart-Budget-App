@@ -2,9 +2,8 @@
 
 **Epic:** Epic 9 - Financial Goal Tracking
 **Story ID:** 9.1
-**Status:** done
+**Status:** ready-for-dev
 **Created:** 2025-11-25
-**Completed:** 2025-12-03
 **Sprint:** Phase 2, Epic 9
 
 ---
@@ -98,29 +97,13 @@ is_completed = current_amount >= target_amount
 
 ## Definition of Done
 
-- [x] All acceptance criteria pass
-- [x] Migration creates goals table
-- [x] CRUD endpoints functional
-- [x] Tier limits enforced
-- [x] Validation working
-- [x] Progress calculation correct
-- [x] Unit tests pass
-- [x] Integration tests pass
-- [x] Code reviewed
-- [x] Story marked 'done' in sprint-status.yaml
-
----
-
-## Dev Agent Record
-
-### Completion Notes
-**Completed:** 2025-12-03
-**Definition of Done:** All acceptance criteria met, endpoints tested and verified, tier limits enforced
-
-**Implementation Summary:**
-- Created migration: `1764721276470_create-goals-table.js`
-- Implemented full feature structure in `backend/src/features/goals/`
-- All CRUD endpoints tested with curl and verified working
-- Tier-based goal limits enforced (Free: 3, Basic: 10, Pro: unlimited)
-- Soft delete pattern implemented (status='archived')
-- Progress calculation included in all API responses
+- [ ] All acceptance criteria pass
+- [ ] Migration creates goals table
+- [ ] CRUD endpoints functional
+- [ ] Tier limits enforced
+- [ ] Validation working
+- [ ] Progress calculation correct
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Code reviewed
+- [ ] Story marked 'done' in sprint-status.yaml

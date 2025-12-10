@@ -121,10 +121,36 @@ router.post('/analyze', authMiddleware, async (req: AuthRequest, res: Response) 
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // STEP 4: Calculate Summary Statistics
+    // STEP 4: Fetch Income Profile (Optional)
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    const income = transactions
+    let incomeProfile: any = null;
+    try {
+      const incomeResult = await pool.query(
+        'SELECT primary_income_amount, primary_income_frequency, primary_income_source, additional_monthly_income, normalized_monthly_income FROM user_income_profile WHERE user_id = $1',
+        [userId]
+      );
+      if (incomeResult.rows.length > 0) {
+        const rawProfile = incomeResult.rows[0];
+        // Parse numeric fields from database strings
+        incomeProfile = {
+          primary_income_amount: parseFloat(rawProfile.primary_income_amount),
+          primary_income_frequency: rawProfile.primary_income_frequency,
+          primary_income_source: rawProfile.primary_income_source,
+          additional_monthly_income: parseFloat(rawProfile.additional_monthly_income),
+          normalized_monthly_income: parseFloat(rawProfile.normalized_monthly_income)
+        };
+      }
+    } catch (error) {
+      console.log('[AI ANALYSIS] Income profile not found or error fetching:', error);
+      // Continue without income profile
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // STEP 5: Calculate Summary Statistics
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const actualIncome = transactions
       .filter((t) => t.type === 'income')
       .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
@@ -132,8 +158,8 @@ router.post('/analyze', authMiddleware, async (req: AuthRequest, res: Response) 
       .filter((t) => t.type === 'expense')
       .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
-    const netBalance = income - expenses;
-    const savingsRate = income > 0 ? ((netBalance / income) * 100).toFixed(2) : '0';
+    const netBalance = actualIncome - expenses;
+    const savingsRate = actualIncome > 0 ? ((netBalance / actualIncome) * 100).toFixed(2) : '0';
 
     // Category breakdown
     const categoryTotals: Record<string, number> = {};
@@ -151,13 +177,15 @@ router.post('/analyze', authMiddleware, async (req: AuthRequest, res: Response) 
     // STEP 5: Build Analysis Prompt
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    const systemPrompt = `You are a professional financial advisor analyzing a user's spending patterns.
+    // Build income-aware system prompt
+    let systemPrompt = `You are a professional financial advisor analyzing a user's spending patterns.
 
 Provide a comprehensive financial analysis with the following sections (use markdown formatting):
 
 # SPENDING OVERVIEW
 - Total income, expenses, net balance, and savings rate
 - Overall trend assessment (improving/declining/stable)
+${incomeProfile ? `- **Income Analysis**: Compare actual income vs expected monthly income and explain any variance` : ''}
 
 # CATEGORY BREAKDOWN
 - Top 5 spending categories with amounts
@@ -174,26 +202,49 @@ Provide a comprehensive financial analysis with the following sections (use mark
 # BUDGET RECOMMENDATIONS
 - Suggested spending limits for each major category
 - Based on 50/30/20 rule (needs/wants/savings)
+${incomeProfile ? `- **Income-Based Budget**: Apply 50/30/20 rule to expected monthly income of $${incomeProfile.normalized_monthly_income.toFixed(2)}` : ''}
 
+${incomeProfile ? `# INCOME-BASED INSIGHTS
+- **Living Within Means**: Is user living within their expected income? Calculate income surplus/shortfall.
+- **Savings Rate Goal**: Recommend 20% savings rate. Current vs target.
+- **50/30/20 Budget Allocation**:
+  - Needs (50%): $${(incomeProfile.normalized_monthly_income * 0.5).toFixed(2)}
+  - Wants (30%): $${(incomeProfile.normalized_monthly_income * 0.3).toFixed(2)}
+  - Savings (20%): $${(incomeProfile.normalized_monthly_income * 0.2).toFixed(2)}
+- **Emergency Fund**: Calculate 3-6 months of average expenses as emergency fund target.
+` : ''}
 # PERSONALIZED INSIGHTS
 - User-specific observations about spending habits
 - Behavioral patterns and trends
 
 Keep the tone professional but friendly. Be specific with numbers and percentages.`;
 
-    const transactionData = `
+    // Build income-aware transaction data
+    let transactionData = `
 TIME RANGE: ${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}
-
+${incomeProfile ? `
+USER INCOME PROFILE:
+- Expected Monthly Income: $${incomeProfile.normalized_monthly_income.toFixed(2)}
+- Primary Income Source: ${incomeProfile.primary_income_source}
+- Primary Income: $${incomeProfile.primary_income_amount.toFixed(2)} (${incomeProfile.primary_income_frequency})
+${incomeProfile.additional_monthly_income > 0 ? `- Additional Monthly Income: $${incomeProfile.additional_monthly_income.toFixed(2)}` : ''}
+` : ''}
 SUMMARY:
-- Total Income: $${income.toFixed(2)}
+- Actual Income (from transactions): $${actualIncome.toFixed(2)}
 - Total Expenses: $${expenses.toFixed(2)}
 - Net Balance: $${netBalance.toFixed(2)}
 - Savings Rate: ${savingsRate}%
 - Transaction Count: ${transactions.length}
+${incomeProfile ? `- Income Variance: $${(actualIncome - incomeProfile.normalized_monthly_income).toFixed(2)} (${((actualIncome - incomeProfile.normalized_monthly_income) / incomeProfile.normalized_monthly_income * 100).toFixed(1)}%)` : ''}
 
 TOP SPENDING CATEGORIES:
 ${topCategories.map(([cat, amt]) => `- ${cat}: $${amt.toFixed(2)}`).join('\n')}
-
+${incomeProfile ? `
+EMERGENCY FUND TARGET:
+- Average Monthly Expenses: $${expenses.toFixed(2)}
+- 3-Month Emergency Fund: $${(expenses * 3).toFixed(2)}
+- 6-Month Emergency Fund: $${(expenses * 6).toFixed(2)}
+` : ''}
 TRANSACTIONS:
 ${transactions
   .slice(0, 100) // Limit to 100 most recent for token efficiency

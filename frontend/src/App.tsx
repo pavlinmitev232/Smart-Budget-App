@@ -16,6 +16,8 @@ import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Subscription from './pages/Subscription';
+import IncomeProfile from './pages/IncomeProfile';
+import Goals from './pages/Goals';
 
 /**
  * Root redirect - redirects to dashboard if authenticated, login if not
@@ -173,6 +175,28 @@ function AppRoutes() {
               <>
                 <Navigation />
                 <Subscription />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/income-profile"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navigation />
+                <IncomeProfile />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/goals"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navigation />
+                <Goals />
               </>
             </ProtectedRoute>
           }

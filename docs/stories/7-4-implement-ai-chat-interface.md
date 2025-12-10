@@ -2,7 +2,7 @@
 
 **Epic:** Epic 7 - AI Financial Advisor (GPT-5.1 Primary)
 **Story ID:** 7.4
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 7
@@ -234,5 +234,5 @@ All type checks pass. Ready for end-to-end testing with live AI API.
 - [x] Conversation limits enforced
 - [x] Deep thinking toggle working
 - [x] Type checks pass
-- [x] Code reviewed (ready for review)
-- [ ] Story marked 'done' in sprint-status.yaml (marked as 'review')
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

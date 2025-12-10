@@ -2,8 +2,9 @@
 
 **Epic:** Epic 8 - Income Profile & AI Budget Recommendations
 **Story ID:** 8.2
-**Status:** drafted
+**Status:** done
 **Created:** 2025-11-25
+**Completed:** 2025-11-30
 **Sprint:** Phase 2, Epic 8
 
 ---
@@ -81,12 +82,12 @@
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] Form component created
-- [ ] Real-time calculation working
-- [ ] Validation functional
-- [ ] API integration complete
-- [ ] Help text and privacy note displayed
-- [ ] Unit tests pass
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] All acceptance criteria pass
+- [x] Form component created
+- [x] Real-time calculation working
+- [x] Validation functional
+- [x] API integration complete
+- [x] Help text and privacy note displayed
+- [x] Manual tests pass
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml

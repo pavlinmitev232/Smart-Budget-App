@@ -7,10 +7,13 @@ import healthRouter from './routes/health';
 import authRouter from './routes/auth';
 import contactRouter from './routes/contact';
 import aiRouter from './routes/ai';
+import alertsRouter from './routes/alerts';
 import categoriesRouter from './features/categories/categories.routes';
 import transactionsRouter from './features/transactions/transactions.routes';
 import analyticsRouter from './features/analytics/analytics.routes';
 import subscriptionRouter from './features/subscriptions/subscription.routes';
+import incomeRouter from './features/income/income.routes';
+import goalsRouter from './features/goals/goals.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sendSuccess } from './utils/response';
 
@@ -66,10 +69,13 @@ app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/contact', contactRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/alerts', alertsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/transactions', transactionsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use(subscriptionRouter);
+app.use(incomeRouter);
+app.use('/api/goals', goalsRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
