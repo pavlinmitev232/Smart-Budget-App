@@ -1134,3 +1134,38 @@ All stories marked as "drafted" in sprint-status.yaml
 - Should include: project description, features, tech stack
 - Must include: simplified step-by-step local setup guide for developers
 - Goal: Make it easy for any developer to clone and run the app locally
+
+## 2025-12-10
+
+### Story 9.5 Integration Testing & Completion (Continued Session)
+
+**Context:** Continued from previous session that was summarized. Story 9.5 (Dynamic Timeline Recalculation) implementation was complete but integration testing found a bug in notifications.service.ts where JSONB metadata was being incorrectly parsed.
+
+**Prompt:** `continue` (context restoration)
+- Resumed testing after fixing JSON parsing bug
+- Started backend server
+- Ran integration tests
+
+**Testing Results:**
+- Fixed bug: JSONB returns object not string, code was calling JSON.parse() on object
+- Fix: `typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata`
+- All API endpoints verified:
+  - GET /api/goals/savings-capacity ✅
+  - GET /api/goals/projections ✅
+  - POST /api/goals/recalculate ✅
+  - GET /api/notifications ✅
+  - PUT /api/notifications/:id/read ✅
+  - PUT /api/notifications/read-all ✅
+- Timeline improvement notifications ✅ (income increase triggers)
+- Timeline worsening notifications ✅ (income decrease triggers)
+- Unit tests: 11/11 passing
+
+**Story 9.5 Completion:**
+- Date: 2025-12-10
+- Agent: Dev Agent
+- Story: 9.5 - Dynamic Timeline Recalculation
+- Status: review → done
+- All 7 tasks completed, all 5 AC met
+- Bug fixed: JSONB metadata parsing in notifications.service.ts
+- Sprint status updated: Story 9.5 marked as done
+- EPIC 9 COMPLETE: All 5 stories done

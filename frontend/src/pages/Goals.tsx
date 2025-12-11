@@ -8,6 +8,10 @@ import {
   Edit2,
   Trash2,
   DollarSign,
+  RefreshCw,
+  Calendar,
+  Clock,
+  Wallet,
 } from 'lucide-react';
 import api from '../services/api';
 import { toast } from 'react-toastify';
@@ -33,12 +37,33 @@ interface Goal {
   isCompleted: boolean;
 }
 
+interface TimelineProjection {
+  goalId: number;
+  goalName: string;
+  monthsToGoal: number | null;
+  projectedCompletion: string | null;
+  monthlySavingsNeeded: number;
+  availableForSavings: number;
+  timelineChangeMonths: number | null;
+  reason: string | null;
+}
+
+interface SavingsCapacity {
+  monthlyIncome: number;
+  avgMonthlyExpenses: number;
+  availableForSavings: number;
+  hasIncomeProfile: boolean;
+}
+
 type SortOption = 'priority' | 'deadline' | 'progress';
 type StatusFilter = 'active' | 'completed' | 'paused' | 'all';
 
 const Goals: React.FC = () => {
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [projections, setProjections] = useState<TimelineProjection[]>([]);
+  const [savingsCapacity, setSavingsCapacity] = useState<SavingsCapacity | null>(null);
   const [loading, setLoading] = useState(true);
+  const [recalculating, setRecalculating] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('priority');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('active');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -51,6 +76,7 @@ const Goals: React.FC = () => {
 
   useEffect(() => {
     fetchGoals();
+    fetchProjections();
   }, [statusFilter]);
 
   const fetchGoals = async () => {
@@ -69,6 +95,48 @@ const Goals: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchProjections = async () => {
+    try {
+      const response = await api.get('/goals/projections');
+      setProjections(response.data.data.projections);
+      setSavingsCapacity(response.data.data.savingsCapacity);
+    } catch (error: any) {
+      console.error('Failed to fetch projections:', error);
+      // Don't show error toast - projections are supplementary
+    }
+  };
+
+  const handleRecalculateTimelines = async () => {
+    try {
+      setRecalculating(true);
+      const response = await api.post('/goals/recalculate');
+      setProjections(response.data.data.projections);
+      setSavingsCapacity(response.data.data.savingsCapacity);
+
+      const notificationsCount = response.data.data.notificationsCreated;
+      if (notificationsCount > 0) {
+        toast.info(`Timeline updated! ${notificationsCount} notification${notificationsCount > 1 ? 's' : ''} created.`);
+      } else {
+        toast.success('Timelines recalculated successfully');
+      }
+    } catch (error: any) {
+      console.error('Failed to recalculate timelines:', error);
+      toast.error(error.response?.data?.error?.message || 'Failed to recalculate timelines');
+    } finally {
+      setRecalculating(false);
+    }
+  };
+
+  const getProjectionForGoal = (goalId: number): TimelineProjection | undefined => {
+    return projections.find(p => p.goalId === goalId);
+  };
+
+  const formatProjectedDate = (dateStr: string | null): string => {
+    if (!dateStr) return 'Unable to calculate';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   };
 
   const handleCreateGoal = () => {
@@ -225,14 +293,56 @@ const Goals: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900">Financial Goals</h1>
             <p className="text-gray-600 mt-1">Track your savings and spending goals</p>
           </div>
-          <button
-            onClick={handleCreateGoal}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Create Goal
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleRecalculateTimelines}
+              disabled={recalculating}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+              title="Recalculate all goal timelines"
+            >
+              <RefreshCw className={`w-5 h-5 ${recalculating ? 'animate-spin' : ''}`} />
+              {recalculating ? 'Calculating...' : 'Recalculate'}
+            </button>
+            <button
+              onClick={handleCreateGoal}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create Goal
+            </button>
+          </div>
         </div>
+
+        {/* Savings Capacity Banner */}
+        {savingsCapacity && (
+          <div className={`mb-6 p-4 rounded-lg ${savingsCapacity.hasIncomeProfile ? 'bg-blue-50 border border-blue-200' : 'bg-yellow-50 border border-yellow-200'}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Wallet className={`w-6 h-6 ${savingsCapacity.hasIncomeProfile ? 'text-blue-500' : 'text-yellow-500'}`} />
+                <div>
+                  <p className="font-medium text-gray-900">
+                    {savingsCapacity.hasIncomeProfile
+                      ? `Available for savings: $${savingsCapacity.availableForSavings.toLocaleString()}/month`
+                      : 'Set up your income profile for accurate projections'}
+                  </p>
+                  {savingsCapacity.hasIncomeProfile && (
+                    <p className="text-sm text-gray-600">
+                      Income: ${savingsCapacity.monthlyIncome.toLocaleString()} - Avg expenses: ${savingsCapacity.avgMonthlyExpenses.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+              {!savingsCapacity.hasIncomeProfile && (
+                <a
+                  href="/income-profile"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Set up now →
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Summary Cards */}
         {summary.totalGoals > 0 && (
@@ -387,6 +497,52 @@ const Goals: React.FC = () => {
                   {getDaysRemaining(goal.deadline)}
                 </span>
               </div>
+
+              {/* Timeline Projections (AC3) */}
+              {goal.status === 'active' && (() => {
+                const projection = getProjectionForGoal(goal.id);
+                if (!projection) return null;
+
+                return (
+                  <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <span className="text-gray-600">Projected completion:</span>
+                      <span className="font-medium text-gray-900">
+                        {formatProjectedDate(projection.projectedCompletion)}
+                      </span>
+                    </div>
+                    {projection.monthsToGoal !== null && (
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-purple-500" />
+                        <span className="text-gray-600">At current rate:</span>
+                        <span className="font-medium text-gray-900">
+                          {projection.monthsToGoal === 0
+                            ? 'Goal reached!'
+                            : `${projection.monthsToGoal} month${projection.monthsToGoal > 1 ? 's' : ''}`}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-600">Monthly savings needed:</span>
+                      <span className="font-medium text-gray-900">
+                        ${projection.monthlySavingsNeeded.toLocaleString()}
+                      </span>
+                    </div>
+                    {projection.timelineChangeMonths !== null && Math.abs(projection.timelineChangeMonths) > 0 && (
+                      <div className={`flex items-center gap-2 ${projection.timelineChangeMonths < 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <TrendingUp className="w-4 h-4" />
+                        <span>
+                          {projection.timelineChangeMonths < 0
+                            ? `Timeline improved by ${Math.abs(projection.timelineChangeMonths)} month${Math.abs(projection.timelineChangeMonths) > 1 ? 's' : ''}!`
+                            : `Timeline extended by ${projection.timelineChangeMonths} month${projection.timelineChangeMonths > 1 ? 's' : ''}`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Actions */}
               <div className="flex gap-2">

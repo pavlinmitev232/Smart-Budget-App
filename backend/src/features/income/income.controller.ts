@@ -2,6 +2,9 @@ import { Response } from 'express';
 import pool from '../../config/database.js';
 import { AuthRequest } from '../../middleware/auth.js';
 import { sendSuccess, sendError } from '../../utils/response.js';
+import { timelineService } from '../goals/timeline.service.js';
+import { notificationsService } from '../goals/notifications.service.js';
+import { goalsService } from '../goals/goals.service.js';
 
 /**
  * Income frequency types
@@ -213,6 +216,39 @@ export async function createOrUpdateIncomeProfile(req: AuthRequest, res: Respons
     console.log(
       `[INCOME PROFILE] User ${userId} ${existingProfile.rows.length > 0 ? 'updated' : 'created'} income profile: $${normalizedMonthlyIncome}/month`
     );
+
+    // Trigger timeline recalculation for all active goals (AC1: Income profile updated trigger)
+    try {
+      // Get previous projections for comparison
+      const goals = await goalsService.getGoals(userId, { status: 'active' });
+      const previousProjections = new Map<number, { projectedCompletion: string | null }>();
+
+      for (const goal of goals) {
+        const prev = await timelineService.getPreviousProjection(goal.id);
+        if (prev) {
+          previousProjections.set(goal.id, prev);
+        }
+      }
+
+      // Recalculate timelines
+      const { projections, notifications } =
+        await timelineService.recalculateUserTimelines(userId, previousProjections);
+
+      // Store new snapshots
+      for (const projection of projections) {
+        await timelineService.storeTimelineSnapshot(projection.goalId, projection);
+      }
+
+      // Create notifications for significant changes
+      for (const notification of notifications) {
+        await notificationsService.createTimelineNotification(userId, notification);
+      }
+
+      console.log(`[INCOME PROFILE] Recalculated timelines for ${projections.length} goals, ${notifications.length} notifications created`);
+    } catch (timelineError) {
+      // Don't fail the income update if timeline recalculation fails
+      console.error('[INCOME PROFILE] Timeline recalculation error:', timelineError);
+    }
 
     return sendSuccess(
       res,

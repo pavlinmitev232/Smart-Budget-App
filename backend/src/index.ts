@@ -14,6 +14,7 @@ import analyticsRouter from './features/analytics/analytics.routes';
 import subscriptionRouter from './features/subscriptions/subscription.routes';
 import incomeRouter from './features/income/income.routes';
 import goalsRouter from './features/goals/goals.routes';
+import notificationsRouter from './features/goals/notifications.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sendSuccess } from './utils/response';
 
@@ -76,6 +77,7 @@ app.use('/api/analytics', analyticsRouter);
 app.use(subscriptionRouter);
 app.use(incomeRouter);
 app.use('/api/goals', goalsRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {

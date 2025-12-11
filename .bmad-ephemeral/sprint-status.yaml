@@ -135,7 +135,7 @@ development_status:
   9-2-build-goal-creation-and-management-ui: done
   9-3-implement-progress-calculation-and-manual-allocation: done
   9-4-build-goals-dashboard-with-visualizations: done
-  9-5-dynamic-timeline-recalculation: ready-for-dev
+  9-5-dynamic-timeline-recalculation: done
   epic-9-retrospective: optional
 
   # Epic 12: AI Bill Comparison Tool

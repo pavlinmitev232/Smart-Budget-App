@@ -217,7 +217,10 @@
       "Bash(cmd //c test-goals-api.bat)",
       "Bash(cmd //c \"D:\\smart budget\\Smart-Budget-App\\test-goals-api.bat\")",
       "Bash(node test-goals.js:*)",
-      "SlashCommand(/bmad:bmm:workflows:story-done)"
+      "SlashCommand(/bmad:bmm:workflows:story-done)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJlbWFpbCI6InRpbWVsaW5ldGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc2NTMyNjA5MSwiZXhwIjoxNzY1NDEyNDkxfQ.YrfmTvx4jUrEecCcRE2DIFFlUVssuOn3boC0srRzY9c\")",
+      "Bash(npx ts-node:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJlbWFpbCI6ImdvYWx0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzY1MzI2MzIyLCJleHAiOjE3NjU0MTI3MjJ9.KnJL5ABsT3H1tVRb0ZoVAYGNYu0FbVljSGE1wDaGDAU\")"
     ],
     "deny": [],
     "ask": []

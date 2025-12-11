@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import MobileNavDrawer from './MobileNavDrawer';
+import NotificationBanner from './NotificationBanner';
 
 export default function Navigation() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -183,8 +184,11 @@ export default function Navigation() {
                       Income
                     </NavLink>
 
+                    {/* Notifications Bell */}
+                    <NotificationBanner className="ml-4" />
+
                     {/* User Dropdown Menu */}
-                    <div className="relative ml-6 pl-6 border-l border-gray-200">
+                    <div className="relative ml-4 pl-4 border-l border-gray-200">
                       <button
                         onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                         className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
