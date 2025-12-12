@@ -91,8 +91,8 @@ SMTP_PASSWORD=your-app-specific-password
 FRONTEND_URL=http://localhost:3000
 
 # AI Configuration
-OPENAI_API_KEY=sk-proj-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
-GEMINI_API_KEY=AIzaSyABC123DEF456GHI789JKL012MNO345PQR678
+OPENAI_API_KEY=sk-proj-123
+GEMINI_API_KEY=123
 ```
 
 ---

@@ -139,9 +139,38 @@ development_status:
   epic-9-retrospective: optional
 
   # Epic 12: AI Bill Comparison Tool
-  epic-12: in-progress
+  epic-12: done
   12-1-implement-image-upload-and-storage: done
   12-2-build-bill-comparison-with-gpt-5-1-vision: done
-  12-3-parse-results-and-calculate-differences: review
-  12-4-build-comparison-results-ui: review
+  12-3-parse-results-and-calculate-differences: done
+  12-4-build-comparison-results-ui: done
   epic-12-retrospective: optional
+
+  # ============================================
+  # PHASE 3: UI Customization & Localization
+  # ============================================
+
+  # Epic 13: Dark Mode
+  epic-13: backlog
+  13-1-implement-theme-context-and-provider: backlog
+  13-2-create-css-theme-variables-and-dark-mode-styles: backlog
+  13-3-build-theme-toggle-ui-component: backlog
+  13-4-persist-theme-preference-to-user-profile: backlog
+  epic-13-retrospective: optional
+
+  # Epic 14: Currency System
+  epic-14: backlog
+  14-1-create-currency-context-and-formatting-utilities: backlog
+  14-2-build-currency-selector-component: backlog
+  14-3-update-all-amount-displays-to-use-currency-formatting: backlog
+  14-4-persist-currency-preference-to-user-profile: backlog
+  epic-14-retrospective: optional
+
+  # Epic 15: Internationalization (i18n)
+  epic-15: backlog
+  15-1-set-up-i18n-infrastructure-with-react-i18next: backlog
+  15-2-build-language-selector-component: backlog
+  15-3-translate-all-ui-components: backlog
+  15-4-persist-language-preference-to-user-profile: backlog
+  15-5-translate-email-templates: backlog
+  epic-15-retrospective: optional

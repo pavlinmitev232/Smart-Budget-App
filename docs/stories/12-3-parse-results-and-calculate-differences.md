@@ -2,7 +2,7 @@
 
 **Epic:** Epic 12 - AI Bill Comparison Tool
 **Story ID:** 12.3
-**Status:** review
+**Status:** done
 **Created:** 2025-11-25
 **Sprint:** Phase 2, Epic 12
 
@@ -110,9 +110,9 @@ avg_inflation = average of all matched item percent_changes
 - [x] Summary insights generated
 - [x] Validation checks in place
 - [x] Edge cases handled
-- [ ] Unit tests pass (calculation logic)
-- [ ] Code reviewed
-- [ ] Story marked 'done' in sprint-status.yaml
+- [x] Unit tests pass (calculation logic)
+- [x] Code reviewed
+- [x] Story marked 'done' in sprint-status.yaml
 
 ---
 
