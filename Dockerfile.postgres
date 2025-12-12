@@ -1,0 +1,20 @@
+FROM postgres:14-alpine
+
+# Install build dependencies and clang
+RUN apk add --no-cache --virtual .build-deps \
+    build-base \
+    clang \
+    llvm \
+    postgresql-dev \
+    git
+
+# Install pg_cron (skip bitcode compilation)
+RUN cd /tmp && \
+    git clone https://github.com/citusdata/pg_cron.git && \
+    cd pg_cron && \
+    make with_llvm=no && \
+    make install with_llvm=no
+
+# Clean up build dependencies
+RUN apk del .build-deps && \
+    rm -rf /tmp/pg_cron

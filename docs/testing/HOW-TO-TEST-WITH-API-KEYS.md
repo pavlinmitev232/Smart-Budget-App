@@ -86,8 +86,8 @@
 
 **Example .env file (bottom section):**
 ```env
-SMTP_EMAIL=hercog121977@gmail.com
-SMTP_PASSWORD=zjrausdtczkmjsoz
+SMTP_EMAIL=your-email@gmail.com
+SMTP_PASSWORD=your-app-specific-password
 FRONTEND_URL=http://localhost:3000
 
 # AI Configuration

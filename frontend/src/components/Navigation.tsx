@@ -183,6 +183,31 @@ export default function Navigation() {
                       </svg>
                       Income
                     </NavLink>
+                    <NavLink
+                      to="/bill-comparison"
+                      className={({ isActive }) =>
+                        `flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                          isActive
+                            ? 'bg-indigo-100 text-indigo-700 font-semibold border-b-2 border-indigo-600'
+                            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+                        }`
+                      }
+                    >
+                      <svg
+                        className="mr-2 h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      Bills
+                    </NavLink>
 
                     {/* Notifications Bell */}
                     <NotificationBanner className="ml-4" />

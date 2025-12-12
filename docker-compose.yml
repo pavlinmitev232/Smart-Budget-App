@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:14-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    image: smart-budget-postgres:14-alpine
     container_name: smart-budget-db
     restart: unless-stopped
     environment:

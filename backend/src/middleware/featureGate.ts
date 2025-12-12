@@ -154,6 +154,33 @@ export const protectAIEndpoint = (requestType: RequestType) => {
 };
 
 /**
+ * Middleware to fetch and attach subscription tier to request
+ * Use this when you need the tier but don't need to enforce a minimum
+ *
+ * @example
+ * router.get('/limits', authMiddleware, withSubscriptionTier, getLimits);
+ */
+export const withSubscriptionTier = async (
+  req: FeatureGatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await getUserWithTier(req.user!.userId);
+    req.user.subscriptionTier = user.subscription_tier;
+    next();
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: 'SERVER_ERROR',
+        message: 'Failed to fetch user subscription',
+      },
+    });
+  }
+};
+
+/**
  * Helper to log request after successful completion
  *
  * Call this in your controller after successfully processing the request

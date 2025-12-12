@@ -18,6 +18,7 @@ import Transactions from './pages/Transactions';
 import Subscription from './pages/Subscription';
 import IncomeProfile from './pages/IncomeProfile';
 import Goals from './pages/Goals';
+import BillComparison from './pages/BillComparison';
 
 /**
  * Root redirect - redirects to dashboard if authenticated, login if not
@@ -197,6 +198,17 @@ function AppRoutes() {
               <>
                 <Navigation />
                 <Goals />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bill-comparison"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navigation />
+                <BillComparison />
               </>
             </ProtectedRoute>
           }

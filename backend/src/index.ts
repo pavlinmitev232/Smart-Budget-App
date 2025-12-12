@@ -15,6 +15,7 @@ import subscriptionRouter from './features/subscriptions/subscription.routes';
 import incomeRouter from './features/income/income.routes';
 import goalsRouter from './features/goals/goals.routes';
 import notificationsRouter from './features/goals/notifications.routes';
+import billComparisonRouter from './features/bill-comparison/bill-comparison.routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { sendSuccess } from './utils/response';
 
@@ -59,7 +60,8 @@ app.use(
 );
 
 // 3. JSON body parser - Parse JSON request bodies
-app.use(express.json());
+// Increased limit to 10MB for base64 image uploads (5MB image + ~33% base64 overhead)
+app.use(express.json({ limit: '10mb' }));
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // ROUTES
@@ -78,6 +80,7 @@ app.use(subscriptionRouter);
 app.use(incomeRouter);
 app.use('/api/goals', goalsRouter);
 app.use('/api/notifications', notificationsRouter);
+app.use('/api/bill-comparison', billComparisonRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {

@@ -139,9 +139,9 @@ development_status:
   epic-9-retrospective: optional
 
   # Epic 12: AI Bill Comparison Tool
-  epic-12: backlog
-  12-1-implement-image-upload-and-storage: drafted
-  12-2-build-bill-comparison-with-gpt-5-1-vision: drafted
-  12-3-parse-results-and-calculate-differences: drafted
-  12-4-build-comparison-results-ui: drafted
+  epic-12: in-progress
+  12-1-implement-image-upload-and-storage: done
+  12-2-build-bill-comparison-with-gpt-5-1-vision: done
+  12-3-parse-results-and-calculate-differences: review
+  12-4-build-comparison-results-ui: review
   epic-12-retrospective: optional

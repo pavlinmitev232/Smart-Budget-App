@@ -254,6 +254,219 @@ export class AIService {
       throw new Error(`Gemini analysis failed: ${error.message}`);
     }
   }
+
+  /**
+   * Get the bill comparison prompt
+   */
+  private getBillComparisonPrompt(): string {
+    return `You are analyzing two receipts/bills to compare prices.
+
+Tasks:
+1. Extract all items and prices from both bills
+2. Match identical or similar items between bills
+3. Calculate price differences for matched items
+4. Identify items that appear in only one bill
+5. Calculate total difference
+6. Provide actionable insights on price changes
+
+IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code blocks, and no additional text.
+
+JSON Schema:
+{
+  "bill1": {
+    "total": <number>,
+    "date": "<string or null>",
+    "vendor": "<string or null>",
+    "items": [{"name": "<string>", "price": <number>, "quantity": <number or 1>}]
+  },
+  "bill2": {
+    "total": <number>,
+    "date": "<string or null>",
+    "vendor": "<string or null>",
+    "items": [{"name": "<string>", "price": <number>, "quantity": <number or 1>}]
+  },
+  "matchedItems": [
+    { "item": "<string>", "price1": <number>, "price2": <number>, "difference": <number>, "percentChange": <number> }
+  ],
+  "unmatchedBill1": [{"name": "<string>", "price": <number>}],
+  "unmatchedBill2": [{"name": "<string>", "price": <number>}],
+  "totalDifference": <number (bill2.total - bill1.total)>,
+  "insights": "<string with 2-3 sentences summarizing key price changes and recommendations>"
+}`;
+  }
+
+  /**
+   * Parse AI response and extract JSON
+   */
+  private parseAIJsonResponse(content: string): any {
+    let cleanContent = content.trim();
+    if (cleanContent.startsWith('```json')) {
+      cleanContent = cleanContent.slice(7);
+    }
+    if (cleanContent.startsWith('```')) {
+      cleanContent = cleanContent.slice(3);
+    }
+    if (cleanContent.endsWith('```')) {
+      cleanContent = cleanContent.slice(0, -3);
+    }
+    cleanContent = cleanContent.trim();
+    return JSON.parse(cleanContent);
+  }
+
+  /**
+   * Compare two bill images using GPT-4 Vision
+   */
+  private async compareBillsWithGPTVision(
+    image1Base64: string,
+    image2Base64: string,
+    userId: number
+  ): Promise<{ result: any; tokensUsed: number; provider: string }> {
+    if (!this.openai) {
+      throw new Error('OpenAI not configured');
+    }
+
+    console.log(`[AI Vision/GPT] Starting bill comparison for user ${userId}`);
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: this.getBillComparisonPrompt(),
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Compare these two bills/receipts. Image 1 is the first/older bill, Image 2 is the second/newer bill.',
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: image1Base64.startsWith('data:') ? image1Base64 : `data:image/jpeg;base64,${image1Base64}`,
+                detail: 'high',
+              },
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: image2Base64.startsWith('data:') ? image2Base64 : `data:image/jpeg;base64,${image2Base64}`,
+                detail: 'high',
+              },
+            },
+          ],
+        },
+      ],
+      max_tokens: 4000,
+      temperature: 0.2,
+    });
+
+    const content = response.choices[0]?.message?.content || '';
+    const tokensUsed = response.usage?.total_tokens || 0;
+
+    console.log(`[AI Vision/GPT] Received response, tokens used: ${tokensUsed}`);
+
+    const result = this.parseAIJsonResponse(content);
+
+    return { result, tokensUsed, provider: 'gpt-4o-vision' };
+  }
+
+  /**
+   * Compare two bill images using Gemini Vision
+   */
+  private async compareBillsWithGeminiVision(
+    image1Base64: string,
+    image2Base64: string,
+    userId: number
+  ): Promise<{ result: any; tokensUsed: number; provider: string }> {
+    if (!this.gemini) {
+      throw new Error('Gemini not configured');
+    }
+
+    console.log(`[AI Vision/Gemini] Starting bill comparison for user ${userId}`);
+
+    const model = this.gemini.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    // Prepare image parts for Gemini
+    const getImagePart = (base64Data: string) => {
+      // Remove data URL prefix if present
+      const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
+      // Detect mime type
+      let mimeType = 'image/jpeg';
+      if (base64Data.includes('image/png')) {
+        mimeType = 'image/png';
+      }
+      return {
+        inlineData: {
+          data: base64,
+          mimeType,
+        },
+      };
+    };
+
+    const prompt = `${this.getBillComparisonPrompt()}
+
+Compare these two bills/receipts. Image 1 is the first/older bill, Image 2 is the second/newer bill.`;
+
+    const result = await model.generateContent([
+      prompt,
+      getImagePart(image1Base64),
+      getImagePart(image2Base64),
+    ]);
+
+    const response = await result.response;
+    const content = response.text();
+
+    // Estimate tokens (Gemini doesn't always provide exact count)
+    const tokensUsed = Math.floor(content.length / 4);
+
+    console.log(`[AI Vision/Gemini] Received response, estimated tokens: ${tokensUsed}`);
+
+    const parsedResult = this.parseAIJsonResponse(content);
+
+    return { result: parsedResult, tokensUsed, provider: 'gemini-2.0-flash-vision' };
+  }
+
+  /**
+   * Compare two bill images using available AI provider
+   * Tries GPT-4 Vision first, falls back to Gemini
+   * @param image1Base64 - First bill image as base64
+   * @param image2Base64 - Second bill image as base64
+   * @param userId - User ID for metadata tracking
+   * @returns Comparison result with matched items and insights
+   */
+  async compareBillsWithVision(
+    image1Base64: string,
+    image2Base64: string,
+    userId: number
+  ): Promise<{
+    result: any;
+    tokensUsed: number;
+    provider: string;
+  }> {
+    // Try GPT-4 Vision first (preferred for accuracy)
+    if (this.openai) {
+      try {
+        return await this.compareBillsWithGPTVision(image1Base64, image2Base64, userId);
+      } catch (error: any) {
+        console.warn('[AI Vision] GPT-4o failed, trying Gemini fallback:', error.message);
+        // Fall through to Gemini
+      }
+    }
+
+    // Try Gemini Vision as fallback
+    if (this.gemini) {
+      try {
+        return await this.compareBillsWithGeminiVision(image1Base64, image2Base64, userId);
+      } catch (error: any) {
+        console.error('[AI Vision] Gemini also failed:', error.message);
+        throw new Error(`Bill comparison failed: ${error.message}`);
+      }
+    }
+
+    throw new Error('No AI provider available. Configure OPENAI_API_KEY or GEMINI_API_KEY.');
+  }
 }
 
 // Export singleton instance - lazy initialization
@@ -314,5 +527,20 @@ export const aiService = {
     transactions: string
   ): Promise<{ insights: string; tokensUsed: number; cached: boolean }> => {
     return aiService.getInstance().analyzeWithGemini(prompt, transactions);
+  },
+
+  /**
+   * Compare two bill images with GPT Vision
+   */
+  compareBillsWithVision: async (
+    image1Base64: string,
+    image2Base64: string,
+    userId: number
+  ): Promise<{
+    result: any;
+    tokensUsed: number;
+    provider: string;
+  }> => {
+    return aiService.getInstance().compareBillsWithVision(image1Base64, image2Base64, userId);
   },
 };

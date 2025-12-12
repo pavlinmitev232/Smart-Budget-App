@@ -2,7 +2,7 @@
 
 **Epic:** Epic 12 - AI Bill Comparison Tool
 **Story ID:** 12.4
-**Status:** drafted
+**Status:** review
 **Created:** 2025-11-25
 **Sprint:** Phase 2, Epic 12
 
@@ -123,14 +123,46 @@
 
 ## Definition of Done
 
-- [ ] All acceptance criteria pass
-- [ ] Comparison results page created
-- [ ] All sections rendered correctly
-- [ ] Matched items table functional
-- [ ] Color coding and styling correct
-- [ ] Responsive layout working
-- [ ] Loading state displayed
-- [ ] Error handling functional
+- [x] All acceptance criteria pass
+- [x] Comparison results page created
+- [x] All sections rendered correctly
+- [x] Matched items table functional
+- [x] Color coding and styling correct
+- [x] Responsive layout working
+- [x] Loading state displayed
+- [x] Error handling functional
 - [ ] Unit tests pass
 - [ ] Code reviewed
 - [ ] Story marked 'done' in sprint-status.yaml
+
+---
+
+## Dev Agent Record
+
+### Files Modified/Created
+- `frontend/src/components/bill-comparison/ComparisonResults.tsx` - NEW - Main comparison results component with all sections
+- `frontend/src/pages/BillComparison.tsx` - Updated with tab navigation, history view, and result view integration
+
+### Completion Notes
+Implemented comprehensive Bill Comparison Results UI for Story 12.4:
+
+**ComparisonResults Component:**
+- `BillSummaryCard` - Side-by-side bill summaries with vendor, date, total, and item count
+- `TotalComparisonCard` - Large difference display with color coding (red increase, green decrease)
+- `MatchedItemsTable` - Sortable/filterable table with columns for item, prices, difference, % change
+- `UnmatchedItemsSection` - Two-column display for items unique to each bill
+- `AISummarySection` - AI insights with key findings and recommendations
+- `LoadingState` - Animated spinner with progress indicator
+- `ErrorState` - Error display with retry and upload new buttons
+
+**BillComparison Page Updates:**
+- Tab navigation (Upload & Compare / History)
+- Comparison history list with status badges
+- View, delete, and retry comparison actions
+- Seamless integration with ComparisonResults component
+
+**UI Features:**
+- Responsive layout (grid on desktop, stacked on mobile)
+- Color scheme matches spec: Green (#10b981), Red (#ef4444), Gray (#6b7280)
+- Sort by item name, difference, or % change
+- Filter by: All, Increased, Decreased, Unchanged

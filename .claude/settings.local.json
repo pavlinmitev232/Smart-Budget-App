@@ -220,7 +220,17 @@
       "SlashCommand(/bmad:bmm:workflows:story-done)",
       "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJlbWFpbCI6InRpbWVsaW5ldGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc2NTMyNjA5MSwiZXhwIjoxNzY1NDEyNDkxfQ.YrfmTvx4jUrEecCcRE2DIFFlUVssuOn3boC0srRzY9c\")",
       "Bash(npx ts-node:*)",
-      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJlbWFpbCI6ImdvYWx0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzY1MzI2MzIyLCJleHAiOjE3NjU0MTI3MjJ9.KnJL5ABsT3H1tVRb0ZoVAYGNYu0FbVljSGE1wDaGDAU\")"
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJlbWFpbCI6ImdvYWx0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzY1MzI2MzIyLCJleHAiOjE3NjU0MTI3MjJ9.KnJL5ABsT3H1tVRb0ZoVAYGNYu0FbVljSGE1wDaGDAU\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJlbWFpbCI6ImJpbGx0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzY1NDIwNDg1LCJleHAiOjE3NjU1MDY4ODV9.VNgcMfDF3dHlnlpfHur9vpiap8Ok3qiRcpVCPjH4GaY\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIzLCJlbWFpbCI6InVwbG9hZHRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjU0OTA3ODksImV4cCI6MTc2NTU3NzE4OX0.ZR33K7TBoAr5Zs_dlM-ECZo5CVZTDGNsLKJu8UufWKQ\")",
+      "Bash(netsh interface ipv4:*)",
+      "Bash(net stop com.docker.service)",
+      "Bash(net stop winnat)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker volume:*)",
+      "Bash(tasklist:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiYmlsbHRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjU1MDkzOTIsImV4cCI6MTc2NTU5NTc5Mn0.zP-k6De24PZZ6LIuJhtFPlRZBMzqJ4D7U1MY8dgJ5js\")"
     ],
     "deny": [],
     "ask": []
